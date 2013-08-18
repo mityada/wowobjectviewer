@@ -101,14 +101,16 @@ void Texture::create()
             break;
     }
 
-    for (int i = 0; i < 16; i++) {
-        if (!m_header->mipmapLength[i]) {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, i - 1);
+    int i;
 
+    for (i = 0; i < 16; i++) {
+        if (!m_header->mipmapLength[i])
             break;
-        }
 
         glCompressedTexImage2D(GL_TEXTURE_2D, i, internalFormat, width, height, 0, m_header->mipmapLength[i], m_data.data() + m_header->mipmapOffset[i]);
+
+        if (glGetError() == GL_INVALID_VALUE)
+            break;
 
         width >>= 1;
 
@@ -120,6 +122,8 @@ void Texture::create()
         if (height == 0)
             height = 1;
     }
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, i - 1);
 
     m_dirty = false;
 }
