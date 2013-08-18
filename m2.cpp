@@ -105,18 +105,30 @@ void M2::initialize(QOpenGLShaderProgram *program)
     m_vertexBuffer->bind();
     m_vertexBuffer->allocate(m_vertices, m_header->verticesCount * sizeof(M2Vertex));
 
-    program->enableAttributeArray("position");
-    program->setAttributeBuffer("position", GL_FLOAT, 0, 3, sizeof(M2Vertex));
+    int offset = 0;
 
-    program->enableAttributeArray("texcoord");
-    program->setAttributeBuffer("texcoord", GL_FLOAT, 6 * sizeof(float) + 8 * sizeof(quint8), 2, sizeof(M2Vertex));
+    program->enableAttributeArray("position");
+    program->setAttributeBuffer("position", GL_FLOAT, offset, 3, sizeof(M2Vertex));
+
+    offset += 3 * sizeof(float);
 
     program->enableAttributeArray("boneweights");
-    program->setAttributeBuffer("boneweights", GL_UNSIGNED_BYTE, 3 * sizeof(float), 4, sizeof(M2Vertex));
+    program->setAttributeBuffer("boneweights", GL_UNSIGNED_BYTE, offset, 4, sizeof(M2Vertex));
+
+    offset += 4 * sizeof(quint8);
 
     program->enableAttributeArray("boneindices");
-    program->setAttributeBuffer("boneindices", GL_UNSIGNED_BYTE, 3 * sizeof(float) + 4 * sizeof(quint8), 4, sizeof(M2Vertex));
+    program->setAttributeBuffer("boneindices", GL_UNSIGNED_BYTE, offset, 4, sizeof(M2Vertex));
 
+    offset += 4 * sizeof(quint8);
+
+    program->enableAttributeArray("normal");
+    program->setAttributeBuffer("normal", GL_FLOAT, offset, 3, sizeof(M2Vertex));
+
+    offset += 3 * sizeof(float);
+
+    program->enableAttributeArray("texcoord");
+    program->setAttributeBuffer("texcoord", GL_FLOAT, offset, 2, sizeof(M2Vertex));
 
     m_indexBuffer = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
     m_indexBuffer->create();
@@ -142,10 +154,6 @@ void M2::render(QOpenGLShaderProgram *program)
     if (!m_initialized)
         initialize(program);
 
-    QMatrix4x4 model;
-    model.rotate(-90, 1.0, 0.0, 0.0);
-
-    program->setUniformValue("model", model);
     program->setUniformValueArray("bones", m_boneMatrices, m_bones.size());
 
     m_vao->bind();

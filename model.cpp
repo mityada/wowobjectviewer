@@ -149,11 +149,16 @@ void Model::paint()
     QMatrix4x4 view;
     view.lookAt(QVector3D(m_distance, 0.0, 0.0), QVector3D(0.0, 0.0, 0.0), QVector3D(0.0, 1.0, 0.0));
 
-    QMatrix4x4 rotate;
-    rotate.rotate(rotationY(), 0.0, 0.0, 1.0);
-    rotate.rotate(rotationX(), 0.0, 1.0, 0.0);
+    QMatrix4x4 model;
+    model.rotate(rotationY(), 0.0, 0.0, 1.0);
+    model.rotate(rotationX(), 0.0, 1.0, 0.0);
+    model.rotate(-90, 1.0, 0.0, 0.0);
 
-    m_program->setUniformValue("viewProjection", projection * view * rotate);
+    m_program->setUniformValue("mvpMatrix", projection * view * model);
+    m_program->setUniformValue("normalMatrix", (view * model).normalMatrix());
+
+    QVector3D light(0.0, 0.0, 1.0);
+    m_program->setUniformValue("light", light);
 
     if (m_model) {
         m_model->update(timeDelta);
