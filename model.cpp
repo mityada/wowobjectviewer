@@ -118,8 +118,7 @@ void Model::paint()
         m_modelChanged = false;
     }
 
-    if (!m_model)
-        return;
+    int timeDelta = m_time.restart();
 
     if (!m_program) {
         m_program = new QOpenGLShaderProgram();
@@ -149,7 +148,10 @@ void Model::paint()
 
     m_program->setUniformValue("viewProjection", projection * view * rotate);
 
-    m_model->render(m_program);
+    if (m_model) {
+        m_model->update(timeDelta);
+        m_model->render(m_program);
+    }
 
     m_program->release();
 
@@ -158,10 +160,5 @@ void Model::paint()
 
 void Model::update()
 {
-    int timeDelta = m_time.restart();
-
-    if (m_model)
-        m_model->update(timeDelta);
-
     window()->update();
 }
