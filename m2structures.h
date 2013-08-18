@@ -201,6 +201,12 @@ struct M2RenderFlags
     quint16 blending;
 };
 
+struct M2Color
+{
+    M2AnimationBlock color;
+    M2AnimationBlock opacity;
+};
+
 struct M2Texture
 {
     quint32 type;

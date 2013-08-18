@@ -68,6 +68,9 @@ private:
 
     M2Animation *m_animations;
 
+    QList<AnimatedValue<QVector3D> > m_colors;
+    QList<AnimatedValue<quint16> > m_opacities;
+
     qint16 *m_transparencyLookup;
     QList<AnimatedValue<quint16> > m_transparencies;
 

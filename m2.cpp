@@ -83,6 +83,13 @@ M2::M2(const QString &fileName) : m_loaded(false), m_initialized(false), m_anima
 
     m_animations = reinterpret_cast<M2Animation *>(m_data.data() + m_header->animationsOffset);
 
+    M2Color *colors = reinterpret_cast<M2Color *>(m_data.data() + m_header->colorsOffset);
+
+    for (quint32 i = 0; i < m_header->colorsCount; i++) {
+        m_colors << AnimatedValue<QVector3D>(colors[i].color, m_sequences, m_data);
+        m_opacities << AnimatedValue<quint16>(colors[i].opacity, m_sequences, m_data);
+    }
+
     m_transparencyLookup = reinterpret_cast<qint16 *>(m_data.data() + m_header->transparencyLookupOffset);
 
     M2AnimationBlock *transparencies = reinterpret_cast<M2AnimationBlock *>(m_data.data() + m_header->transparencyOffset);
@@ -216,15 +223,19 @@ void M2::render(QOpenGLShaderProgram *program)
 
         program->setUniformValue("textureMatrix", textureMatrix);
 
+        QVector4D color(1.0f, 1.0f, 1.0f, 1.0f);
+
+        qint16 colorIndex = m_textureUnits[i].colorIndex;
+
+        if (colorIndex != -1)
+            color *= QVector4D(m_colors[colorIndex].getValue(m_animation, m_time), m_opacities[colorIndex].getValue(m_animation, m_time) / 32767.0f);
+
         qint16 transparency = m_transparencyLookup[m_textureUnits[i].transparencyIndex];
 
-        float alpha = 1.0f;
+        if (transparency != -1)
+            color *= QVector4D(1.0f, 1.0f, 1.0f, m_transparencies[transparency].getValue(m_animation, m_time) / 32767.0f);
 
-        if (transparency != -1) {
-            alpha = m_transparencies[transparency].getValue(m_animation, m_time) / 32767.0f;
-        }
-
-        program->setUniformValue("alpha", alpha);
+        program->setUniformValue("color", color);
 
         quint32 submesh = m_textureUnits[i].submeshIndex;
 
