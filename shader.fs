@@ -7,7 +7,12 @@ varying vec3 v_normal;
 
 void main()
 {
-    float diffuse = max(dot(normalize(v_normal), normalize(light)), 0.0);
+    vec3 normal = normalize(v_normal);
+
+    if (gl_FrontFacing == false)
+        normal = -normal;
+
+    float diffuse = max(dot(normal, normalize(light)), 0.0);
 
     gl_FragColor = color * texture2D(texture, v_texcoord) * diffuse;
 }
