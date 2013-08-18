@@ -125,6 +125,13 @@ void Model::paint()
         m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader.vs");
         m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shader.fs");
         m_program->link();
+
+        const GLubyte white[3] = {255, 255, 255};
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, white); 
     }
 
     QPointF position = mapToScene(QPointF(0, height()));
