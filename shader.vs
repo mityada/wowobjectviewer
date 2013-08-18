@@ -14,14 +14,19 @@ varying vec3 v_normal;
 
 void main()
 {
-    vec4 animatedPosition;
-    animatedPosition = (bones[int(boneindices.x * 255.0)] * vec4(position, 1.0)) * (boneweights.x);
-    animatedPosition += (bones[int(boneindices.y * 255.0)] * vec4(position, 1.0)) * (boneweights.y);
-    animatedPosition += (bones[int(boneindices.z * 255.0)] * vec4(position, 1.0)) * (boneweights.z);
-    animatedPosition += (bones[int(boneindices.w * 255.0)] * vec4(position, 1.0)) * (boneweights.w);
-    
-    gl_Position = mvpMatrix * vec4(animatedPosition.xyz, 1.0);
+    gl_Position  = (bones[int(boneindices.x * 255.0)] * vec4(position, 1.0)) * (boneweights.x);
+    gl_Position += (bones[int(boneindices.y * 255.0)] * vec4(position, 1.0)) * (boneweights.y);
+    gl_Position += (bones[int(boneindices.z * 255.0)] * vec4(position, 1.0)) * (boneweights.z);
+    gl_Position += (bones[int(boneindices.w * 255.0)] * vec4(position, 1.0)) * (boneweights.w);
+
+    gl_Position = mvpMatrix * vec4(gl_Position.xyz, 1.0);
 
     v_texcoord = (textureMatrix * vec4(texcoord, 1.0, 1.0)).xy;
-    v_normal = normalMatrix * normal;
+
+    v_normal  = ((bones[int(boneindices.x * 255.0)] * vec4(normal, 0.0)) * (boneweights.x)).xyz;
+    v_normal += ((bones[int(boneindices.y * 255.0)] * vec4(normal, 0.0)) * (boneweights.y)).xyz;
+    v_normal += ((bones[int(boneindices.z * 255.0)] * vec4(normal, 0.0)) * (boneweights.z)).xyz;
+    v_normal += ((bones[int(boneindices.w * 255.0)] * vec4(normal, 0.0)) * (boneweights.w)).xyz;
+    
+    v_normal = normalMatrix * v_normal;
 }
