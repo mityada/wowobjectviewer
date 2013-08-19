@@ -202,6 +202,8 @@ void M2::render(QOpenGLShaderProgram *program)
                 break;
         }
 
+        bool lighting = (flags.flags & RENDER_FLAG_UNLIT) == 0;
+
         if (flags.flags & RENDER_FLAG_TWO_SIDED)
             glDisable(GL_CULL_FACE);
         else
@@ -223,19 +225,32 @@ void M2::render(QOpenGLShaderProgram *program)
 
         program->setUniformValue("textureMatrix", textureMatrix);
 
-        QVector4D color(1.0f, 1.0f, 1.0f, 1.0f);
+        float opacity = 1.0f;
+        QVector4D emission;
 
         qint16 colorIndex = m_textureUnits[i].colorIndex;
 
-        if (colorIndex != -1)
-            color *= QVector4D(m_colors[colorIndex].getValue(m_animation, m_time), m_opacities[colorIndex].getValue(m_animation, m_time) / 32767.0f);
+        if (colorIndex != -1) {
+            QVector3D c = m_colors[colorIndex].getValue(m_animation, m_time);
+            float o = m_opacities[colorIndex].getValue(m_animation, m_time) / 32767.0f;
+
+            opacity = 0.0f;
+            emission = QVector4D(c, o);
+        }
 
         qint16 transparency = m_transparencyLookup[m_textureUnits[i].transparencyIndex];
 
-        if (transparency != -1)
-            color *= QVector4D(1.0f, 1.0f, 1.0f, m_transparencies[transparency].getValue(m_animation, m_time) / 32767.0f);
+        if (transparency != -1) {
+            float t = m_transparencies[transparency].getValue(m_animation, m_time) / 32767.0f;
 
-        program->setUniformValue("color", color);
+            opacity *= t;
+            emission.setW(emission.w() * t);
+        }
+
+        program->setUniformValue("material.opacity", opacity);
+        program->setUniformValue("material.emission", emission);
+
+        program->setUniformValue("lighting", lighting);
 
         quint32 submesh = m_textureUnits[i].submeshIndex;
 

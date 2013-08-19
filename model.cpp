@@ -157,8 +157,9 @@ void Model::paint()
     m_program->setUniformValue("mvpMatrix", projection * view * model);
     m_program->setUniformValue("normalMatrix", (view * model).normalMatrix());
 
-    QVector3D light(0.0, 0.0, 1.0);
-    m_program->setUniformValue("light", light);
+    m_program->setUniformValue("light.position", QVector3D(0.0, 0.0, 1.0));
+    m_program->setUniformValue("light.ambient", QVector4D(0.5, 0.5, 0.5, 1.0));
+    m_program->setUniformValue("light.diffuse", QVector4D(1.0, 1.0, 1.0, 1.0));
 
     if (m_model) {
         m_model->update(timeDelta);
