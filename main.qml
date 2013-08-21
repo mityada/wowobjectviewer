@@ -9,15 +9,13 @@ ApplicationWindow {
 
     visible: true
 
-    Rectangle {
+    Item {
         anchors.top: controls.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
         anchors.topMargin: 5
-
-        color: "black"
 
         Model {
             id: model

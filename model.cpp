@@ -142,9 +142,13 @@ void Model::paint()
     QPointF position = mapToScene(QPointF(0, height()));
     glViewport(position.x(), window()->height() - position.y(), width(), height());
 
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(position.x(), window()->height() - position.y(), width(), height());
+
     glDepthMask(GL_TRUE);
 
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     QMatrix4x4 projection;
     projection.perspective(32.25, float(width()) / float(height()), 1.0, 100.0);
