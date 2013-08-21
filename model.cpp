@@ -126,6 +126,11 @@ void Model::paint()
         m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shader.fs");
         m_program->link();
 
+        m_particleProgram = new QOpenGLShaderProgram();
+        m_particleProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/particle.vs");
+        m_particleProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/particle.fs");
+        m_particleProgram->link();
+
         const GLubyte white[3] = {255, 255, 255};
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -141,8 +146,6 @@ void Model::paint()
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    m_program->bind();
-
     QMatrix4x4 projection;
     projection.perspective(32.25, float(width()) / float(height()), 1.0, 100.0);
 
@@ -154,19 +157,32 @@ void Model::paint()
     model.rotate(rotationX(), 0.0, 1.0, 0.0);
     model.rotate(-90, 1.0, 0.0, 0.0);
 
-    m_program->setUniformValue("mvpMatrix", projection * view * model);
-    m_program->setUniformValue("normalMatrix", (view * model).normalMatrix());
-
-    m_program->setUniformValue("light.position", QVector3D(0.0, 0.0, 1.0));
-    m_program->setUniformValue("light.ambient", QVector4D(0.5, 0.5, 0.5, 1.0));
-    m_program->setUniformValue("light.diffuse", QVector4D(1.0, 1.0, 1.0, 1.0));
-
     if (m_model) {
         m_model->update(timeDelta);
-        m_model->render(m_program);
-    }
 
-    m_program->release();
+        m_program->bind();
+
+        m_program->setUniformValue("mvpMatrix", projection * view * model);
+        m_program->setUniformValue("normalMatrix", (view * model).normalMatrix());
+
+        m_program->setUniformValue("light.position", QVector3D(0.0, 0.0, 1.0));
+        m_program->setUniformValue("light.ambient", QVector4D(0.5, 0.5, 0.5, 1.0));
+        m_program->setUniformValue("light.diffuse", QVector4D(1.0, 1.0, 1.0, 1.0));
+
+        m_model->render(m_program);
+
+        m_program->release();
+
+        m_particleProgram->bind();
+
+        m_particleProgram->setUniformValue("mvpMatrix", projection * view * model);
+
+        glDisable(GL_CULL_FACE);
+
+        m_model->renderParticles(m_particleProgram, view * model);
+
+        m_particleProgram->release();
+    }
 
     glDepthMask(GL_FALSE);
 }

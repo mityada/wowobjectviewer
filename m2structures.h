@@ -223,6 +223,45 @@ struct M2TextureAnimation
     M2AnimationBlock scaling;
 };
 
+struct M2ParticleEmitter
+{
+    qint32 id;
+    qint32 flags;
+    float position[3];
+    qint16 bone;
+    qint16 texture;
+    quint32 unknown1Count;
+    quint32 unknown1Offset;
+    quint32 unknown2Count;
+    quint32 unknown2Offset;
+    qint16 blending;
+    qint16 emitterType;
+    qint16 particleType;
+    qint16 unknown3;
+    qint16 rows;
+    qint16 cols;
+    M2AnimationBlock speed;
+    M2AnimationBlock speedVariation;
+    M2AnimationBlock verticalRange;
+    M2AnimationBlock horizontalRange;
+    M2AnimationBlock gravity;
+    M2AnimationBlock lifespan;
+    M2AnimationBlock emissionRate;
+    M2AnimationBlock emissionLength;
+    M2AnimationBlock emissionWidth;
+    M2AnimationBlock gravity2;
+    float midpoint;
+    quint32 colors[3];
+    float sizes[3];
+    qint16 tiles[10];
+    float unknown4[3];
+    float scales[3];
+    float slowdown;
+    float rotation;
+    float unknown5[16];
+    M2AnimationBlock enabled;
+};
+
 #pragma pack(pop)
 
 #endif

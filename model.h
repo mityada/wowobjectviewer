@@ -57,6 +57,7 @@ private:
     float m_distance;
 
     QOpenGLShaderProgram *m_program;
+    QOpenGLShaderProgram *m_particleProgram;
 };
 
 #endif

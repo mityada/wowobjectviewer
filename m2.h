@@ -12,6 +12,7 @@
 #include "texture.h"
 #include "textureanimation.h"
 #include "bone.h"
+#include "particleemitter.h"
 
 class M2 : public QObject
 {
@@ -24,6 +25,7 @@ public:
 
     void initialize(QOpenGLShaderProgram *program);
     void render(QOpenGLShaderProgram *program);
+    void renderParticles(QOpenGLShaderProgram *program, QMatrix4x4 view);
     void update(int timeDelta);
 
     void setAnimation(quint32 animation);
@@ -42,6 +44,7 @@ public:
 
 private:
     void updateBones();
+    void updateParticleEmitters(int timeDelta);
 
     QByteArray m_data;
 
@@ -73,6 +76,8 @@ private:
 
     qint16 *m_transparencyLookup;
     QList<AnimatedValue<quint16> > m_transparencies;
+
+    QList<ParticleEmitter> m_particleEmitters;
 
     quint32 *m_sequences;
 

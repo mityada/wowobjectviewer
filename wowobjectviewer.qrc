@@ -3,5 +3,7 @@
         <file>main.qml</file>
         <file>shader.vs</file>
         <file>shader.fs</file>
+        <file>particle.vs</file>
+        <file>particle.fs</file>
     </qresource>
 </RCC>
