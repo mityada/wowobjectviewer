@@ -13,6 +13,7 @@
 #include "textureanimation.h"
 #include "bone.h"
 #include "particleemitter.h"
+#include "mvp.h"
 
 class M2 : public QObject
 {
@@ -24,8 +25,8 @@ public:
     explicit M2(const QString &fileName);
 
     void initialize(QOpenGLShaderProgram *program);
-    void render(QOpenGLShaderProgram *program);
-    void renderParticles(QOpenGLShaderProgram *program, QMatrix4x4 view);
+    void render(QOpenGLShaderProgram *program, MVP mvp);
+    void renderParticles(QOpenGLShaderProgram *program, MVP mvp);
     void update(int timeDelta);
 
     void setAnimation(quint32 animation);
@@ -43,7 +44,6 @@ public:
     }
 
 private:
-    void updateBones();
     void updateParticleEmitters(int timeDelta);
 
     QByteArray m_data;
@@ -60,7 +60,6 @@ private:
     M2RenderFlags *m_renderFlags;
 
     QList<Bone> m_bones;
-    QMatrix4x4 *m_boneMatrices;
 
     QList<Texture> m_textures;
     quint16 *m_textureLookup;

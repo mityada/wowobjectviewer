@@ -3,6 +3,7 @@
 #include <QMatrix4x4>
 
 #include "model.h"
+#include "mvp.h"
 
 Model::Model() : m_model(0), m_modelChanged(false)
 {
@@ -150,41 +151,25 @@ void Model::paint()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    QMatrix4x4 projection;
-    projection.perspective(32.25, float(width()) / float(height()), 1.0, 100.0);
-
-    QMatrix4x4 view;
-    view.lookAt(QVector3D(m_distance, 0.0, 0.0), QVector3D(0.0, 0.0, 0.0), QVector3D(0.0, 1.0, 0.0));
-
-    QMatrix4x4 model;
-    model.rotate(rotationY(), 0.0, 0.0, 1.0);
-    model.rotate(rotationX(), 0.0, 1.0, 0.0);
-    model.rotate(-90, 1.0, 0.0, 0.0);
+    MVP mvp;
+    mvp.projection.perspective(32.25, float(width()) / float(height()), 1.0, 100.0);
+    mvp.view.lookAt(QVector3D(m_distance, 0.0, 0.0), QVector3D(0.0, 0.0, 0.0), QVector3D(0.0, 1.0, 0.0));
+    mvp.model.rotate(rotationY(), 0.0, 0.0, 1.0);
+    mvp.model.rotate(rotationX(), 0.0, 1.0, 0.0);
+    mvp.model.rotate(-90, 1.0, 0.0, 0.0);
 
     if (m_model) {
         m_model->update(timeDelta);
 
         m_program->bind();
-
-        m_program->setUniformValue("mvpMatrix", projection * view * model);
-        m_program->setUniformValue("normalMatrix", (view * model).normalMatrix());
-
         m_program->setUniformValue("light.position", QVector3D(0.0, 0.0, 1.0));
         m_program->setUniformValue("light.ambient", QVector4D(0.5, 0.5, 0.5, 1.0));
         m_program->setUniformValue("light.diffuse", QVector4D(1.0, 1.0, 1.0, 1.0));
-
-        m_model->render(m_program);
-
+        m_model->render(m_program, mvp);
         m_program->release();
 
         m_particleProgram->bind();
-
-        m_particleProgram->setUniformValue("mvpMatrix", projection * view * model);
-
-        glDisable(GL_CULL_FACE);
-
-        m_model->renderParticles(m_particleProgram, view * model);
-
+        m_model->renderParticles(m_particleProgram, mvp);
         m_particleProgram->release();
     }
 

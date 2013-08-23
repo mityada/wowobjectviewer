@@ -112,6 +112,9 @@ void ParticleEmitter::update(quint32 animation, quint32 time, float timeDelta, Q
         QVector3D direction(0.0f, 0.0f, 1.0f);
 
         if (m_emitterType == 2) {
+            if (horizontalRange == 0)
+                horizontalRange = M_PI;
+
             QMatrix4x4 m = getParticleMatrix(verticalRange * 2, horizontalRange * 2, length, width);
 
             direction = m * QVector3D(0.0f, 1.0f, 0.0f) * rand(0.0f, 1.0f);
@@ -123,7 +126,7 @@ void ParticleEmitter::update(quint32 animation, quint32 time, float timeDelta, Q
             else
                 direction.normalize();
         } else {
-            QMatrix4x4 m = getParticleMatrix(verticalRange, verticalRange, 1.0f, 1.0f);
+            //QMatrix4x4 m = getParticleMatrix(verticalRange, verticalRange, 1.0f, 1.0f);
 
             particle.position = boneMatrix * (m_position + QVector3D(0.5f * rand(-length, length), 0.5f * rand(-width, width), 0.0f));
 
@@ -162,7 +165,7 @@ void ParticleEmitter::update(quint32 animation, quint32 time, float timeDelta, Q
     }
 }
 
-void ParticleEmitter::initialize(QOpenGLShaderProgram *program)
+void ParticleEmitter::initialize()
 {
     m_vertexBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     m_vertexBuffer->create();
@@ -175,18 +178,14 @@ void ParticleEmitter::initialize(QOpenGLShaderProgram *program)
     m_initialized = true;
 }
 
-void ParticleEmitter::render(QOpenGLShaderProgram *program, QMatrix4x4 modelView)
+void ParticleEmitter::render(QOpenGLShaderProgram *program, MVP mvp)
 {
     if (!m_initialized)
-        initialize(program);
+        initialize();
 
-    QMatrix4x4 billboard = modelView.inverted();
-    billboard(3, 0) = 0.0f;
-    billboard(3, 1) = 0.0f;
-    billboard(3, 2) = 0.0f;
-    billboard(0, 3) = 0.0f;
-    billboard(1, 3) = 0.0f;
-    billboard(2, 3) = 0.0f;
+    program->setUniformValue("mvpMatrix", mvp.getMVPMatrix());
+
+    QMatrix4x4 billboard = mvp.getBillboardMatrix();
 
     ParticleVertex *vertices = new ParticleVertex[4 * m_particles.size()];
     quint16 *indices = new quint16[6 * m_particles.size()];

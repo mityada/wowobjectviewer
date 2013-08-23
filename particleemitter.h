@@ -7,6 +7,7 @@
 
 #include "m2structures.h"
 #include "animatedvalue.h"
+#include "mvp.h"
 
 struct Particle
 {
@@ -55,13 +56,13 @@ public:
     ParticleEmitter(const M2ParticleEmitter &emitter, const quint32 *sequences, const QByteArray &data);
 
     void update(quint32 animation, quint32 time, float timeDelta, QMatrix4x4 boneMatrix = QMatrix4x4());
-    void render(QOpenGLShaderProgram *program, QMatrix4x4 modelView);
+    void render(QOpenGLShaderProgram *program, MVP mvp);
 
     qint16 getBoneId();
     qint16 getTextureId();
 
 private:
-    void initialize(QOpenGLShaderProgram *program);
+    void initialize();
 
     qint32 m_flags;
     QVector3D m_position;

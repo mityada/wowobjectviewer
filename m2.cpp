@@ -81,8 +81,6 @@ M2::M2(const QString &fileName) : m_loaded(false), m_initialized(false), m_anima
             m_bones[i].parent = &m_bones[bones[i].parent];
     }
 
-    m_boneMatrices = new QMatrix4x4[m_bones.size()];
-
     m_animations = reinterpret_cast<M2Animation *>(m_data.data() + m_header->animationsOffset);
 
     M2Color *colors = reinterpret_cast<M2Color *>(m_data.data() + m_header->colorsOffset);
@@ -172,7 +170,7 @@ void M2::initialize(QOpenGLShaderProgram *program)
     m_initialized = true;
 }
 
-void M2::render(QOpenGLShaderProgram *program)
+void M2::render(QOpenGLShaderProgram *program, MVP mvp)
 {
     if (!m_loaded)
         return;
@@ -180,7 +178,17 @@ void M2::render(QOpenGLShaderProgram *program)
     if (!m_initialized)
         initialize(program);
 
-    program->setUniformValueArray("bones", m_boneMatrices, m_bones.size());
+    program->setUniformValue("mvpMatrix", mvp.getMVPMatrix());
+    program->setUniformValue("normalMatrix", mvp.getNormalMatrix());
+
+    QMatrix4x4 *boneMatrices = new QMatrix4x4[m_bones.size()];
+
+    for (int i = 0; i < m_bones.size(); i++)
+        boneMatrices[i] = m_bones[i].getMatrix(m_animation, m_time, mvp);
+
+    program->setUniformValueArray("bones", boneMatrices, m_bones.size());
+
+    delete[] boneMatrices;
 
     m_vao->bind();
 
@@ -282,7 +290,7 @@ void M2::render(QOpenGLShaderProgram *program)
     m_vao->release();
 }
 
-void M2::renderParticles(QOpenGLShaderProgram *program, QMatrix4x4 modelView)
+void M2::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
 {
     for (int i = 0; i < m_particleEmitters.size(); i++) {
         qint16 texture = m_particleEmitters[i].getTextureId();
@@ -290,7 +298,7 @@ void M2::renderParticles(QOpenGLShaderProgram *program, QMatrix4x4 modelView)
         if (texture != -1)
             m_textures[texture].bind();
 
-        m_particleEmitters[i].render(program, modelView);
+        m_particleEmitters[i].render(program, mvp);
     }
 }
 
@@ -305,15 +313,8 @@ void M2::update(int timeDelta)
         if (m_time >= m_animations[m_animation].endTime)
             m_time = m_animations[m_animation].startTime;
 
-        updateBones();
         updateParticleEmitters(timeDelta);
     }
-}
-
-void M2::updateBones()
-{
-    for (qint32 i = 0; i < m_bones.size(); i++)
-       m_boneMatrices[i] = m_bones[i].getMatrix(m_animation, m_time);
 }
 
 void M2::updateParticleEmitters(int timeDelta)
@@ -322,7 +323,7 @@ void M2::updateParticleEmitters(int timeDelta)
         qint16 bone = m_particleEmitters[i].getBoneId();
         QMatrix4x4 boneMatrix;
         if (bone != -1)
-            boneMatrix = m_boneMatrices[bone];
+            boneMatrix = m_bones[bone].getMatrix(m_animation, m_time, MVP());
 
         m_particleEmitters[i].update(m_animation, m_time, timeDelta / 1000.0f, boneMatrix);
     }
@@ -338,8 +339,6 @@ void M2::setAnimation(quint32 animation)
 
     m_animation = animation;
     m_time = m_animations[m_animation].startTime;
-
-    updateBones();
 }
 
 quint32 M2::animation() const

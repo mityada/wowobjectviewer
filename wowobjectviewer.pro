@@ -11,7 +11,8 @@ HEADERS += m2structures.h\
            animatedvalue.h\
            bone.h\
            textureanimation.h\
-           particleemitter.h
+           particleemitter.h\
+           mvp.h
 
 SOURCES += main.cpp\
            m2.cpp\
@@ -19,6 +20,7 @@ SOURCES += main.cpp\
            texture.cpp\
            bone.cpp\
            textureanimation.cpp\
-           particleemitter.cpp
+           particleemitter.cpp\
+           mvp.cpp
 
 RESOURCES += wowobjectviewer.qrc
