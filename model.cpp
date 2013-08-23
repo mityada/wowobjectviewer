@@ -4,6 +4,7 @@
 
 #include "model.h"
 #include "mvp.h"
+#include "dbc.h"
 
 Model::Model() : m_model(0), m_modelChanged(false)
 {
@@ -12,6 +13,22 @@ Model::Model() : m_model(0), m_modelChanged(false)
     m_distance = 20.0;
 
     connect(this, SIGNAL(windowChanged(QQuickWindow *)), this, SLOT(handleWindowChanged(QQuickWindow *)));
+}
+
+void Model::loadCreatureModel(quint32 displayId)
+{
+    CreatureDisplayInfoDBC::entry displayInfo = CreatureDisplayInfoDBC::getEntry(displayId);
+    CreatureModelDataDBC::entry modelData = CreatureModelDataDBC::getEntry(displayInfo.model);
+
+    m_modelFileName = QString(modelData.model).replace("\\", "/").replace(".mdx", ".m2");
+
+    QString modelPath = m_modelFileName.section('/', 0, -2);
+
+    setTexture(11, modelPath + "/" + QString(displayInfo.skin1) + ".blp");
+    setTexture(12, modelPath + "/" + QString(displayInfo.skin2) + ".blp");
+    setTexture(13, modelPath + "/" + QString(displayInfo.skin3) + ".blp");
+
+    m_modelChanged = true;
 }
 
 void Model::setModel(QString model)

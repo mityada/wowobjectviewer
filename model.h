@@ -20,6 +20,8 @@ class Model : public QQuickItem
 public:
     Model();
 
+    Q_INVOKABLE void loadCreatureModel(quint32 displayId);
+
     void setModel(QString model);
     Q_INVOKABLE void setTexture(quint32 type, QString texture);
     void setRotationX(float rotation);

@@ -80,46 +80,20 @@ ApplicationWindow {
                     onAccepted: model.model = fileUrl;
                 }
 
-                Button {
-                    text: "Load skin #1"
+                TextField {
+                    id: displayId
 
-                    onClicked: textureFile1.open()
-                }
+                    placeholderText: "Display ID"
 
-                FileDialog {
-                    id: textureFile1
-
-                    nameFilters: [ "BLP (*.blp)" ]
-
-                    onAccepted: model.setTexture(11, fileUrl);
+                    onAccepted: loadCreature.clicked()
                 }
 
                 Button {
-                    text: "Load skin #2"
+                    id: loadCreature
 
-                    onClicked: textureFile2.open()
-                }
+                    text: "Load creature"
 
-                FileDialog {
-                    id: textureFile2
-
-                    nameFilters: [ "BLP (*.blp)" ]
-
-                    onAccepted: model.setTexture(12, fileUrl);
-                }
-
-                Button {
-                    text: "Load skin #3"
-
-                    onClicked: textureFile3.open()
-                }
-
-                FileDialog {
-                    id: textureFile3
-
-                    nameFilters: [ "BLP (*.blp)" ]
-
-                    onAccepted: model.setTexture(13, fileUrl);
+                    onClicked: model.loadCreatureModel(displayId.text);
                 }
             }
 
