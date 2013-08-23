@@ -97,6 +97,22 @@ M2::M2(const QString &fileName) : m_loaded(false), m_initialized(false), m_anima
     for (quint32 i = 0; i < m_header->transparencyCount; i++)
         m_transparencies << AnimatedValue<quint16>(transparencies[i], m_sequences, m_data);
 
+    M2Attachment *attachments = reinterpret_cast<M2Attachment *>(m_data.data() + m_header->attachmentsOffset);
+
+    qDebug("%u attachments", m_header->attachmentsCount);
+    for (quint32 i = 0; i < m_header->attachmentsCount; i++) {
+        qDebug("Attachment id %u:", attachments[i].id);
+        qDebug("\tbone %u", attachments[i].bone);
+        qDebug("\tposition (%f, %f, %f)", attachments[i].position[0], attachments[i].position[1], attachments[i].position[2]);
+    }
+
+    qint16 *attachmentLookup = reinterpret_cast<qint16 *>(m_data.data() + m_header->attachmentLookupOffset);
+
+    for (quint32 i = 0; i < m_header->attachmentLookupCount; i++) {
+        if (attachmentLookup[i] != -1)
+            m_attachments[i] = &attachments[attachmentLookup[i]];
+    }
+
     M2ParticleEmitter *particleEmitters = reinterpret_cast<M2ParticleEmitter *>(m_data.data() + m_header->particleEmittersOffset);
 
     qDebug("%u particle emitters", m_header->particleEmittersCount);
@@ -288,6 +304,8 @@ void M2::render(QOpenGLShaderProgram *program, MVP mvp)
     glBlendFunc(GL_ONE, GL_ZERO);
 
     m_vao->release();
+
+    renderAttachments(program, mvp);
 }
 
 void M2::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
@@ -299,6 +317,48 @@ void M2::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
             m_textures[texture].bind();
 
         m_particleEmitters[i].render(program, mvp);
+    }
+
+    renderAttachmentsParticles(program, mvp);
+}
+
+void M2::renderAttachments(QOpenGLShaderProgram *program, MVP mvp)
+{
+    QMultiHash<quint32, M2 *>::iterator it = m_attachedModels.begin();
+
+    while (it != m_attachedModels.end()) {
+        float *position = m_attachments[it.key()]->position;
+        qint32 bone = m_attachments[it.key()]->bone;
+
+        MVP attachmentMVP = mvp;
+
+        if (bone >= 0 && bone < m_bones.size())
+            attachmentMVP.model *= m_bones[bone].getMatrix(m_animation, m_time, mvp);
+
+        attachmentMVP.model.translate(position[0], position[1], position[2]);
+
+        it.value()->render(program, attachmentMVP);
+        it++;
+    }
+}
+
+void M2::renderAttachmentsParticles(QOpenGLShaderProgram *program, MVP mvp)
+{
+    QMultiHash<quint32, M2 *>::iterator it = m_attachedModels.begin();
+
+    while (it != m_attachedModels.end()) {
+        float *position = m_attachments[it.key()]->position;
+        qint32 bone = m_attachments[it.key()]->bone;
+
+        MVP attachmentMVP = mvp;
+
+        if (bone >= 0 && bone < m_bones.size())
+            attachmentMVP.model *= m_bones[bone].getMatrix(m_animation, m_time, mvp);
+
+        attachmentMVP.model.translate(position[0], position[1], position[2]);
+
+        it.value()->renderParticles(program, attachmentMVP);
+        it++;
     }
 }
 
@@ -314,6 +374,7 @@ void M2::update(int timeDelta)
             m_time = m_animations[m_animation].startTime;
 
         updateParticleEmitters(timeDelta);
+        updateAttachments(timeDelta);
     }
 }
 
@@ -326,6 +387,17 @@ void M2::updateParticleEmitters(int timeDelta)
             boneMatrix = m_bones[bone].getMatrix(m_animation, m_time, MVP());
 
         m_particleEmitters[i].update(m_animation, m_time, timeDelta / 1000.0f, boneMatrix);
+    }
+}
+
+void M2::updateAttachments(int timeDelta)
+{
+    QMultiHash<quint32, M2 *>::iterator it = m_attachedModels.begin();
+
+    while (it != m_attachedModels.end()) {
+        it.value()->setAnimating(animating());
+        it.value()->update(timeDelta);
+        it++;
     }
 }
 
@@ -365,4 +437,27 @@ void M2::setTexture(quint32 type, QString fileName)
         return;
 
     m_textures[m_replaceableTextures[type]].load(fileName);
+}
+
+bool M2::attachModel(quint32 attachmentId, M2 *model)
+{
+    if (!m_attachments.contains(attachmentId))
+        return false;
+
+    m_attachedModels.insertMulti(attachmentId, model);
+
+    return true;
+}
+
+bool M2::detachModel(quint32 attachmentId, M2 *model)
+{
+    QMultiHash<quint32, M2 *>::iterator it = m_attachedModels.find(attachmentId, model);
+
+    if (it != m_attachedModels.end()) {
+        m_attachedModels.erase(it);
+
+        return true;
+    }
+
+    return false;
 }

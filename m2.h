@@ -37,6 +37,9 @@ public:
 
     void setTexture(quint32 type, QString fileName);
 
+    bool attachModel(quint32 attachmentId, M2 *model);
+    bool detachModel(quint32 attachmentId, M2 *model);
+
     template <typename T>
     T * getArray(quint32 offset)
     {
@@ -45,6 +48,10 @@ public:
 
 private:
     void updateParticleEmitters(int timeDelta);
+    void updateAttachments(int timeDelta);
+
+    void renderAttachments(QOpenGLShaderProgram *program, MVP mvp);
+    void renderAttachmentsParticles(QOpenGLShaderProgram *program, MVP mvp);
 
     QByteArray m_data;
 
@@ -75,6 +82,9 @@ private:
 
     qint16 *m_transparencyLookup;
     QList<AnimatedValue<quint16> > m_transparencies;
+
+    QHash<quint32, M2Attachment *> m_attachments;
+    QMultiHash<quint32, M2 *> m_attachedModels;
 
     QList<ParticleEmitter> m_particleEmitters;
 

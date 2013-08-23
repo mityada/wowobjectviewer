@@ -223,6 +223,14 @@ struct M2TextureAnimation
     M2AnimationBlock scaling;
 };
 
+struct M2Attachment
+{
+    quint32 id;
+    quint32 bone;
+    float position[3];
+    M2AnimationBlock data;
+};
+
 struct M2ParticleEmitter
 {
     qint32 id;
