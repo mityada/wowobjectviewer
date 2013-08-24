@@ -21,8 +21,6 @@ ApplicationWindow {
             id: model
 
             anchors.fill: parent
-
-            animation: animation.value
         }
 
         MouseArea {
@@ -106,30 +104,20 @@ ApplicationWindow {
                     text: "Animation:"
                 }
 
-                SpinBox {
+                TextField {
                     id: animation
+
+                    text: "0"
+
+                    onAccepted: play.clicked()
                 }
 
                 Button {
-                    id: startStop
+                    id: play
 
-                    //anchors.left: parent.left
-                    //anchors.right: parent.right
+                    text: "Play"
 
-                    states: [
-                        State {
-                            name: "start"
-                            when: !model.animating
-                            PropertyChanges { target: startStop; text: "Start" }
-                        },
-                        State {
-                            name: "stop"
-                            when: model.animating
-                            PropertyChanges { target: startStop; text: "Stop" }
-                        }
-                    ]
-
-                    onClicked: model.animating = !model.animating
+                    onClicked: model.animation = animation.text;
                 }
             }
         }

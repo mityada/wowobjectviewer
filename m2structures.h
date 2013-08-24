@@ -80,21 +80,28 @@ struct M2Header
     quint32 particleEmittersOffset;
 };
 
+enum AnimationFlag
+{
+    ANIMATION_NO_LOOP       = 0x01,
+    ANIMATION_STOP_AT_END   = 0x02
+};
+
 struct M2Animation
 {
     quint32 id;
     quint32 startTime;
     quint32 endTime;
     float moveSpeed;
-    quint32 loopType;
     quint32 flags;
-    quint32 unknown1;
+    quint16 chance;
+    quint16 unknown1;
     quint32 unknown2;
     quint32 unknown3;
+    quint32 unknown4;
     QVector3D bounding[2];
     float radius;
     qint16 nextAnimation;
-    quint16 unknown4;
+    quint16 index;
 };
 
 struct M2AnimationBlock

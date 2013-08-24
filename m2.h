@@ -30,7 +30,7 @@ public:
     void update(int timeDelta);
 
     void setAnimation(quint32 animation);
-    quint32 animation() const;
+    qint32 animation() const;
 
     void setAnimating(bool animating);
     bool animating() const;
@@ -47,6 +47,8 @@ public:
     }
 
 private:
+    void switchAnimation();
+
     void updateParticleEmitters(int timeDelta);
     void updateAttachments(int timeDelta);
 
@@ -76,6 +78,7 @@ private:
     QList<TextureAnimation> m_textureAnimations;
 
     M2Animation *m_animations;
+    qint16 *m_animationsLookup;
 
     QList<AnimatedValue<QVector3D> > m_colors;
     QList<AnimatedValue<quint16> > m_opacities;
@@ -96,6 +99,8 @@ private:
     bool m_animating;
     quint32 m_animation;
     quint32 m_time;
+    qint32 m_animationState;
+    qint32 m_animationOneshot;
 
     QOpenGLVertexArrayObject *m_vao;
     QOpenGLBuffer *m_vertexBuffer;

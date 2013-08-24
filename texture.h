@@ -30,7 +30,6 @@ public:
 private:
     void create();
 
-    QString getLocalFileName(const QString &mpqFileName);
     quint32 * readPalettedTexture(quint32 width, quint32 height, const char *data);
 
     QByteArray m_data;

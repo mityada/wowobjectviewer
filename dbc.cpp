@@ -28,5 +28,6 @@ const char * DBC::getStringBlock() const
     return m_strings;
 }
 
+const DBC AnimationDataDBC::dbc("DBFilesClient/AnimationData.dbc");
 const DBC CreatureDisplayInfoDBC::dbc("DBFilesClient/CreatureDisplayInfo.dbc");
 const DBC CreatureModelDataDBC::dbc("DBFilesClient/CreatureModelData.dbc");

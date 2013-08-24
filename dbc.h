@@ -48,6 +48,27 @@ private:
     const char *m_strings;
 };
 
+class AnimationDataDBC
+{
+public:
+    struct entry
+    {
+        quint32 id;
+        const char *name;
+    };
+
+    static entry getEntry(quint32 id)
+    {
+        entry e = dbc.getEntry<entry>(id);
+        e.name = dbc.getStringBlock() + quint32(e.name);
+
+        return e;
+    }
+
+private:
+    static const DBC dbc;
+};
+
 class CreatureDisplayInfoDBC
 {
 public:
@@ -76,6 +97,7 @@ public:
 
         return e;
     }
+
 private:
     static const DBC dbc;
 };

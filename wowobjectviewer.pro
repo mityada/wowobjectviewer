@@ -13,7 +13,8 @@ HEADERS += m2structures.h\
            textureanimation.h\
            particleemitter.h\
            mvp.h\
-           dbc.h
+           dbc.h\
+           util.h
 
 SOURCES += main.cpp\
            m2.cpp\
@@ -23,6 +24,7 @@ SOURCES += main.cpp\
            textureanimation.cpp\
            particleemitter.cpp\
            mvp.cpp\
-           dbc.cpp
+           dbc.cpp\
+           util.cpp
 
 RESOURCES += wowobjectviewer.qrc
