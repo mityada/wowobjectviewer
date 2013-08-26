@@ -31,3 +31,6 @@ const char * DBC::getStringBlock() const
 const DBC AnimationDataDBC::dbc("DBFilesClient/AnimationData.dbc");
 const DBC CreatureDisplayInfoDBC::dbc("DBFilesClient/CreatureDisplayInfo.dbc");
 const DBC CreatureModelDataDBC::dbc("DBFilesClient/CreatureModelData.dbc");
+const DBC SpellVisualDBC::dbc("DBFilesClient/SpellVisual.dbc");
+const DBC SpellVisualKitDBC::dbc("DBFilesClient/SpellVisualKit.dbc");
+const DBC SpellVisualEffectNameDBC::dbc("DBFilesClient/SpellVisualEffectName.dbc");

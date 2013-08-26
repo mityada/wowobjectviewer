@@ -124,4 +124,80 @@ private:
     static const DBC dbc;
 };
 
+class SpellVisualDBC
+{
+public:
+    struct entry
+    {
+        quint32 id;
+        quint32 precast;
+        quint32 cast;
+        quint32 impact;
+        quint32 state;
+        quint32 channel;
+        quint32 hasMissile;
+        quint32 missile;
+    };
+
+    static entry getEntry(quint32 id)
+    {
+        return dbc.getEntry<entry>(id);
+    }
+
+private:
+    static const DBC dbc;
+};
+
+class SpellVisualKitDBC
+{
+public:
+    struct entry
+    {
+        quint32 id;
+        qint32 startAnimation;
+        qint32 animation;
+        qint32 head;
+        qint32 chest;
+        qint32 base;
+        qint32 leftHand;
+        qint32 rightHand;
+        qint32 breath1;
+        qint32 breath2;
+        qint32 unknown1;
+        qint32 unknown2;
+        qint32 base2;
+    };
+
+    static entry getEntry(quint32 id)
+    {
+        return dbc.getEntry<entry>(id);
+    }
+
+private:
+    static const DBC dbc;
+};
+
+class SpellVisualEffectNameDBC
+{
+public:
+    struct entry
+    {
+        quint32 id;
+        const char *name;
+        const char *model;
+    };
+
+    static entry getEntry(quint32 id)
+    {
+        entry e = dbc.getEntry<entry>(id);
+        e.name = dbc.getStringBlock() + quint32(e.name);
+        e.model = dbc.getStringBlock() + quint32(e.model);
+
+        return e;
+    }
+
+private:
+    static const DBC dbc;
+};
+
 #endif

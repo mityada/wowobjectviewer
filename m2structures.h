@@ -230,6 +230,18 @@ struct M2TextureAnimation
     M2AnimationBlock scaling;
 };
 
+enum AttachmentSlot
+{
+    ATTACHMENT_CHEST        = 15,
+    ATTACHMENT_BREATH       = 17,
+    ATTACHMENT_NAME         = 18,
+    ATTACHMENT_BASE         = 19,
+    ATTACHMENT_HEAD         = 20,
+    ATTACHMENT_LEFT_HAND    = 21,
+    ATTACHMENT_RIGHT_HAND   = 22,
+    ATTACHMENT_BREATH_2     = 23
+};
+
 struct M2Attachment
 {
     quint32 id;

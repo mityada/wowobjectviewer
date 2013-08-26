@@ -1,65 +1,44 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <QtQuick/QQuickItem>
-#include <QtGui/QOpenGLShaderProgram>
-#include <QTime>
+#include <QObject>
+#include <QOpenGLShaderProgram>
 
 #include "m2.h"
+#include "spellvisualkit.h"
 
-class Model : public QQuickItem
+class Model : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString model READ model WRITE setModel)
-    Q_PROPERTY(float rotationX READ rotationX WRITE setRotationX)
-    Q_PROPERTY(float rotationY READ rotationY WRITE setRotationY)
-    Q_PROPERTY(float distance READ distance WRITE setDistance)
-    Q_PROPERTY(quint32 animation READ animation WRITE setAnimation)
-    Q_PROPERTY(bool animating READ animating WRITE setAnimating NOTIFY animatingChanged)
+    Q_PROPERTY(quint32 displayId MEMBER m_displayId WRITE setDisplayId)
+    Q_PROPERTY(float x MEMBER m_x)
+    Q_PROPERTY(float y MEMBER m_y)
+    Q_PROPERTY(float orientation MEMBER m_orientation)
 
 public:
     Model();
 
-    Q_INVOKABLE void loadCreatureModel(quint32 displayId);
+    Q_INVOKABLE void addSpellVisualKit(quint32 id, bool oneshot = false);
+    Q_INVOKABLE void removeSpellVisualKit(quint32 id);
 
-    void setModel(QString model);
-    Q_INVOKABLE void setTexture(quint32 type, QString texture);
-    void setRotationX(float rotation);
-    void setRotationY(float rotation);
-    void setDistance(float distance);
-    void setAnimation(quint32 animation);
-    void setAnimating(bool animating);
+    void setDisplayId(quint32 displayId);
 
-    QString model() const;
-    float rotationX() const;
-    float rotationY() const;
-    float distance() const;
-    quint32 animation() const;
-    bool animating() const;
-
-public slots:
-    void paint();
-    void update();
-
-signals:
-    void animatingChanged();
-
-private slots:
-    void handleWindowChanged(QQuickWindow *win);
+    void update(int timeDelta);
+    void render(QOpenGLShaderProgram *program, MVP mvp);
+    void renderParticles(QOpenGLShaderProgram *program, MVP mvp);
 
 private:
+    void updateVisualKits();
+
+    quint32 m_displayId;
+    float m_x, m_y, m_orientation;
+
     M2 *m_model;
     bool m_modelChanged;
     QString m_modelFileName;
-    QMap<quint32, QString> m_textureFileNames;
+    QHash<quint32, QString> m_textureFileNames;
 
-    QTime m_time;
-    float m_rotationX;
-    float m_rotationY;
-    float m_distance;
-
-    QOpenGLShaderProgram *m_program;
-    QOpenGLShaderProgram *m_particleProgram;
+    QHash<quint32, SpellVisualKit> m_visualKits;
 };
 
 #endif

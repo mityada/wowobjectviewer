@@ -14,7 +14,10 @@ HEADERS += m2structures.h\
            particleemitter.h\
            mvp.h\
            dbc.h\
-           util.h
+           util.h\
+           spellvisualkit.h\
+           spellvisual.h\
+           modelscene.h
 
 SOURCES += main.cpp\
            m2.cpp\
@@ -25,6 +28,9 @@ SOURCES += main.cpp\
            particleemitter.cpp\
            mvp.cpp\
            dbc.cpp\
-           util.cpp
+           util.cpp\
+           spellvisualkit.cpp\
+           spellvisual.cpp\
+           modelscene.cpp
 
 RESOURCES += wowobjectviewer.qrc

@@ -17,17 +17,41 @@ ApplicationWindow {
 
         anchors.topMargin: 5
 
-        Model {
-            id: model
+        ModelScene {
+            id: scene
 
             anchors.fill: parent
+
+            rotationX: 45;
+            rotationY: -20;
+
+            Model {
+                id: caster
+
+                y: -3
+                orientation: 90
+            }
+
+            Model {
+                id: target
+
+                y: 3
+                orientation: -90
+            }
+        }
+
+        SpellVisual {
+            id: visual
+
+            caster: caster
+            target: target
         }
 
         MouseArea {
             property real lastX;
             property real lastY;
 
-            anchors.fill: model
+            anchors.fill: scene
 
             onPressed: {
                 lastX = mouseX;
@@ -35,14 +59,14 @@ ApplicationWindow {
             }
 
             onPositionChanged: {
-                model.rotationX += 360 * (mouseX - lastX) / width;
-                model.rotationY -= 360 * (mouseY - lastY) / height;
+                scene.rotationX += 360 * (mouseX - lastX) / width;
+                scene.rotationY -= 360 * (mouseY - lastY) / height;
 
                 lastX = mouseX;
                 lastY = mouseY;
             }
 
-            onWheel: model.distance -= wheel.angleDelta.y / 120;
+            onWheel: scene.distance -= wheel.angleDelta.y / 120;
         }
     }
 
@@ -64,60 +88,35 @@ ApplicationWindow {
             Row {
                 spacing: 5
 
-                Button {
-                    text: "Load model"
+                TextField {
+                    placeholderText: "Caster"
 
-                    onClicked: modelFile.open()
-                }
-
-                FileDialog {
-                    id: modelFile
-
-                    nameFilters: [ "M2 (*.m2)" ]
-
-                    onAccepted: model.model = fileUrl;
+                    onAccepted: caster.displayId = text
                 }
 
                 TextField {
-                    id: displayId
+                    placeholderText: "Target"
 
-                    placeholderText: "Display ID"
-
-                    onAccepted: loadCreature.clicked()
-                }
-
-                Button {
-                    id: loadCreature
-
-                    text: "Load creature"
-
-                    onClicked: model.loadCreatureModel(displayId.text);
-                }
-            }
-
-            Row {
-                spacing: 5
-
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    text: "Animation:"
+                    onAccepted: target.displayId = text
                 }
 
                 TextField {
-                    id: animation
+                    id: visualId
 
-                    text: "0"
+                    placeholderText: "Visual"
 
-                    onAccepted: play.clicked()
+                    onAccepted: cast.clicked()
                 }
 
                 Button {
-                    id: play
+                    id: cast
 
-                    text: "Play"
+                    text: "Cast"
 
-                    onClicked: model.animation = animation.text;
+                    onClicked: {
+                        visual.visual = visualId.text;
+                        visual.start();
+                    }
                 }
             }
         }

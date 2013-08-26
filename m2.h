@@ -29,7 +29,7 @@ public:
     void renderParticles(QOpenGLShaderProgram *program, MVP mvp);
     void update(int timeDelta);
 
-    void setAnimation(quint32 animation);
+    void setAnimation(qint32 animation, bool forceOneshot = false);
     qint32 animation() const;
 
     void setAnimating(bool animating);
@@ -78,7 +78,7 @@ private:
     QList<TextureAnimation> m_textureAnimations;
 
     M2Animation *m_animations;
-    qint16 *m_animationsLookup;
+    QHash<quint32, qint16> m_animationsLookup;
 
     QList<AnimatedValue<QVector3D> > m_colors;
     QList<AnimatedValue<quint16> > m_opacities;

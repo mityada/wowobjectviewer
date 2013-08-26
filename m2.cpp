@@ -10,6 +10,8 @@ M2::M2(const QString &fileName)
     : m_loaded(false),
       m_initialized(false),
       m_animating(true),
+      m_animation(0),
+      m_time(0),
       m_animationState(-1),
       m_animationOneshot(-1)
 {
@@ -93,30 +95,12 @@ M2::M2(const QString &fileName)
 
     m_animations = reinterpret_cast<M2Animation *>(m_data.data() + m_header->animationsOffset);
 
-    qDebug("%u animations", m_header->animationsCount);
-    for (quint32 i = 0; i < m_header->animationsCount; i++) {
-        qDebug("Animation %u:", i);
-        qDebug("\tid %u", m_animations[i].id);
-        qDebug("\tstart %u", m_animations[i].startTime);
-        qDebug("\tend %u", m_animations[i].endTime);
-        qDebug("\tmove speed %f", m_animations[i].moveSpeed);
-        qDebug("\tflags %u", m_animations[i].flags);
-        qDebug("\tchance %u", m_animations[i].chance);
-        qDebug("\tunknown1 %u", m_animations[i].unknown1);
-        qDebug("\tunknown2 %u", m_animations[i].unknown2);
-        qDebug("\tunknown3 %u", m_animations[i].unknown3);
-        qDebug("\tunknown4 %u", m_animations[i].unknown4);
-        qDebug("\tbounding (%f, %f, %f), (%f, %f, %f)", m_animations[i].bounding[0].x(), m_animations[i].bounding[0].y(), m_animations[i].bounding[0].z(), m_animations[i].bounding[1].x(), m_animations[i].bounding[1].y(), m_animations[i].bounding[1].z());
-        qDebug("\tradius %f", m_animations[i].radius);
-        qDebug("\tnext %d", m_animations[i].nextAnimation);
-        qDebug("\tindex %u", m_animations[i].index);
+    qint16 *animationsLookup = reinterpret_cast<qint16 *>(m_data.data() + m_header->animationLookupOffset);
+
+    for (quint32 i = 0; i < m_header->animationLookupCount; i++) {
+        if (animationsLookup[i] != -1)
+            m_animationsLookup[i] = animationsLookup[i];
     }
-
-    m_animationsLookup = reinterpret_cast<qint16 *>(m_data.data() + m_header->animationLookupOffset);
-
-    qDebug("%u animation lookups", m_header->animationLookupCount);
-    for (quint32 i = 0; i < m_header->animationLookupCount; i++)
-        qDebug("Animation lookup %u: %d", i, m_animationsLookup[i]);
 
     M2Color *colors = reinterpret_cast<M2Color *>(m_data.data() + m_header->colorsOffset);
 
@@ -134,13 +118,6 @@ M2::M2(const QString &fileName)
 
     M2Attachment *attachments = reinterpret_cast<M2Attachment *>(m_data.data() + m_header->attachmentsOffset);
 
-    qDebug("%u attachments", m_header->attachmentsCount);
-    for (quint32 i = 0; i < m_header->attachmentsCount; i++) {
-        qDebug("Attachment id %u:", attachments[i].id);
-        qDebug("\tbone %u", attachments[i].bone);
-        qDebug("\tposition (%f, %f, %f)", attachments[i].position[0], attachments[i].position[1], attachments[i].position[2]);
-    }
-
     qint16 *attachmentLookup = reinterpret_cast<qint16 *>(m_data.data() + m_header->attachmentLookupOffset);
 
     for (quint32 i = 0; i < m_header->attachmentLookupCount; i++) {
@@ -150,20 +127,8 @@ M2::M2(const QString &fileName)
 
     M2ParticleEmitter *particleEmitters = reinterpret_cast<M2ParticleEmitter *>(m_data.data() + m_header->particleEmittersOffset);
 
-    qDebug("%u particle emitters", m_header->particleEmittersCount);
-
-    for (quint32 i = 0; i < m_header->particleEmittersCount; i++) {
-        qDebug("Particle emitter %u:", i);
-        qDebug("\tid %d", particleEmitters[i].id);
-        qDebug("\tflags %x", particleEmitters[i].flags);
-        qDebug("\tposition (%f, %f, %f)", particleEmitters[i].position[0], particleEmitters[i].position[1], particleEmitters[i].position[2]);
-        qDebug("\tbone %d", particleEmitters[i].bone);
-        qDebug("\ttexture %d", particleEmitters[i].texture);
-        qDebug("\temitter type %d", particleEmitters[i].emitterType);
-        qDebug("\tparticle type %d", particleEmitters[i].particleType);
-
+    for (quint32 i = 0; i < m_header->particleEmittersCount; i++)
         m_particleEmitters << ParticleEmitter(particleEmitters[i], m_sequences, m_data);
-    }
 
     m_loaded = true;
 }
@@ -215,8 +180,6 @@ void M2::initialize(QOpenGLShaderProgram *program)
 
     m_vertexBuffer->release();
     m_indexBuffer->release();
-
-    setAnimation(0);
 
     m_initialized = true;
 }
@@ -402,25 +365,25 @@ void M2::update(int timeDelta)
     if (!m_initialized)
         return;
 
-    if (animating()) {
+    if (animating() && animation() != -1) {
         m_time += timeDelta;
 
         if (m_time >= m_animations[m_animation].endTime) {
-            if (m_animations[m_animation].flags & ANIMATION_NO_LOOP) {
-                m_time = m_animations[m_animation].endTime - 1;
-
-                if (!(m_animations[m_animation].flags & ANIMATION_STOP_AT_END)) {
-                    m_animationOneshot = -1;
-                    switchAnimation();
-                }
-            } else {
+            if (m_animationOneshot != -1) {
+                m_animationOneshot = -1;
                 switchAnimation();
+            } else {
+                if (m_animations[m_animation].flags & ANIMATION_STOP_AT_END)
+                    m_time = m_animations[m_animation].endTime - 1;
+                else
+                    switchAnimation();
             }
         }
 
         updateParticleEmitters(timeDelta);
-        updateAttachments(timeDelta);
     }
+
+    updateAttachments(timeDelta);
 }
 
 void M2::updateParticleEmitters(int timeDelta)
@@ -446,18 +409,23 @@ void M2::updateAttachments(int timeDelta)
     }
 }
 
-void M2::setAnimation(quint32 animation)
+void M2::setAnimation(qint32 animation, bool forceOneshot)
 {
     if (!m_loaded)
         return;
 
-    qint16 id = m_animationsLookup[animation];
+    if (animation == -1) {
+        m_animationState = -1;
+        return;
+    }
+
+    qint16 id = m_animationsLookup.value(animation, -1);
     if (id == -1)
         return;
 
     quint32 flags = m_animations[id].flags;
 
-    if ((flags & ANIMATION_NO_LOOP) && !(flags & ANIMATION_STOP_AT_END))
+    if (forceOneshot || ((flags & ANIMATION_NO_LOOP) && !(flags & ANIMATION_STOP_AT_END)))
         m_animationOneshot = animation;
     else
         m_animationState = animation;
@@ -470,7 +438,7 @@ void M2::switchAnimation()
     if (animation() == -1)
         return;
 
-    m_animation = m_animationsLookup[animation()];
+    m_animation = m_animationsLookup.value(animation());
 
     quint16 roll = rand() % 0x7FFF;
 

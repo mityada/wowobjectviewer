@@ -70,11 +70,6 @@ ParticleEmitter::ParticleEmitter(const M2ParticleEmitter &emitter, const quint32
 
         m_colors[i] = QVector4D(red, green, blue, alpha);
     }
-
-    qDebug() << "\tvertical range" << m_verticalRange.getValue(0, 0);
-    qDebug() << "\thorizontal range" << m_horizontalRange.getValue(0, 0);
-    qDebug() << "\tlength" << m_emissionLength.getValue(0, 0);
-    qDebug() << "\twidth" << m_emissionWidth.getValue(0, 0);
 }
 
 QMatrix4x4 getParticleMatrix(float v, float h, float l, float w)
@@ -117,7 +112,7 @@ void ParticleEmitter::update(quint32 animation, quint32 time, float timeDelta, Q
 
             QMatrix4x4 m = getParticleMatrix(verticalRange * 2, horizontalRange * 2, length, width);
 
-            direction = m * QVector3D(0.0f, 1.0f, 0.0f) * rand(0.0f, 1.0f);
+            direction = (boneMatrix * m * QVector4D(0.0f, 1.0f, 0.0f, 0.0f) * rand(0.0f, 1.0f)).toVector3D();
 
             particle.position = boneMatrix * m_position + direction;
 
