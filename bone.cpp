@@ -15,14 +15,14 @@ QMatrix4x4 Bone::getMatrix(quint32 animation, quint32 time, MVP mvp)
     QMatrix4x4 matrix;
     matrix.translate(m_pivot);
 
-    if (m_scaling.isValid())
-        matrix.scale(m_scaling.getValue(animation, time));
+    if (m_translation.isValid())
+        matrix.translate(m_translation.getValue(animation, time));
 
     if (m_rotation.isValid())
         matrix.rotate(m_rotation.getValue(animation, time));
 
-    if (m_translation.isValid())
-        matrix.translate(m_translation.getValue(animation, time));
+    if (m_scaling.isValid())
+        matrix.scale(m_scaling.getValue(animation, time));
 
     if (isBillboarded()) {
         QMatrix4x4 billboard = mvp.getBillboardMatrix();
