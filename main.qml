@@ -24,49 +24,101 @@ ApplicationWindow {
 
             rotationX: 45;
             rotationY: -20;
-
-            Model {
-                id: caster
-
-                y: -3
-                orientation: 90
-            }
-
-            Model {
-                id: target
-
-                y: 3
-                orientation: -90
-            }
         }
 
         SpellVisual {
             id: visual
-
-            caster: caster
-            target: target
         }
 
         MouseArea {
+            id: mouseArea
+
             property real lastX;
             property real lastY;
 
+            property real lastWorldX;
+            property real lastWorldY;
+
+            property Model selectedModel;
+
+            property bool selectingCaster;
+            property bool selectingTarget;
+
             anchors.fill: scene
 
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            hoverEnabled: true
+
             onPressed: {
+                selectedModel = scene.selectedModel;
+
                 lastX = mouseX;
                 lastY = mouseY;
+
+                lastWorldX = scene.worldX;
+                lastWorldY = scene.worldY;
+            }
+
+            onReleased: {
+                selectedModel = null;
+            }
+
+            onClicked: {
+                if (mouse.button == Qt.LeftButton) {
+                    if (selectingCaster) {
+                        visual.caster = scene.selectedModel;
+                        selectingCaster = false;
+                    }
+
+                    if (selectingTarget) {
+                        visual.target = scene.selectedModel;
+                        selectingTarget = false;
+                    }
+                }
+
+                if (mouse.button == Qt.RightButton) {
+                    scene.removeModel(scene.selectedModel);
+                }
             }
 
             onPositionChanged: {
-                scene.rotationX += 360 * (mouseX - lastX) / width;
-                scene.rotationY -= 360 * (mouseY - lastY) / height;
+                scene.mouseX = mouseX;
+                scene.mouseY = mouseY;
 
-                lastX = mouseX;
-                lastY = mouseY;
+                if (mouse.buttons & Qt.LeftButton) {
+                    if (!selectedModel) {
+                        scene.rotationX += 360 * (mouseX - lastX) / width;
+                        scene.rotationY -= 360 * (mouseY - lastY) / height;
+                    } else {
+                        selectedModel.x += scene.worldX - lastWorldX;
+                        selectedModel.y += scene.worldY - lastWorldY;
+
+                        if (selectedModel.x > 10.0)
+                            selectedModel.x = 10.0;
+                        else if (selectedModel.x < -10.0)
+                            selectedModel.x = -10.0;
+
+                        if (selectedModel.y > 10.0)
+                            selectedModel.y = 10.0;
+                        else if (selectedModel.y < -10.0)
+                            selectedModel.y = -10.0;
+                    }
+
+                    lastX = mouseX;
+                    lastY = mouseY;
+
+                    lastWorldX = scene.worldX;
+                    lastWorldY = scene.worldY;
+                }
             }
 
-            onWheel: scene.distance -= wheel.angleDelta.y / 120;
+            onWheel: {
+                if (selectedModel) {
+                    selectedModel.orientation += wheel.angleDelta.y / 8;
+                } else {
+                    scene.distance -= wheel.angleDelta.y / 120;
+                }
+            }
         }
     }
 
@@ -86,18 +138,27 @@ ApplicationWindow {
             spacing: 5
 
             Row {
+                id: row
+
                 spacing: 5
 
                 TextField {
-                    placeholderText: "Caster"
+                    id: displayId
 
-                    onAccepted: caster.displayId = text
+                    placeholderText: "Display ID"
+
+                    onAccepted: add.clicked()
                 }
 
-                TextField {
-                    placeholderText: "Target"
+                Button {
+                    id: add
 
-                    onAccepted: target.displayId = text
+                    text: "Add"
+
+                    onClicked: {
+                        var model = Qt.createQmlObject('import WoWObjectViewer 1.0; Model {displayId: ' + displayId.text + ';}', scene);
+                        scene.addModel(model);
+                    }
                 }
 
                 TextField {
@@ -106,6 +167,18 @@ ApplicationWindow {
                     placeholderText: "Visual"
 
                     onAccepted: cast.clicked()
+                }
+
+                Button {
+                    text: "Set caster"
+
+                    onClicked: mouseArea.selectingCaster = true;
+                }
+
+                Button {
+                    text: "Set target"
+
+                    onClicked: mouseArea.selectingTarget = true;
                 }
 
                 Button {
