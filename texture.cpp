@@ -85,6 +85,8 @@ void Texture::create()
     if (!m_texture)
         glGenTextures(1, &m_texture);
 
+    initializeOpenGLFunctions();
+
     glBindTexture(GL_TEXTURE_2D, m_texture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

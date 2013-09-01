@@ -19,7 +19,7 @@ struct BLPHeader
     quint32 mipmapLength[16];
 };
 
-class Texture
+class Texture : public QOpenGLFunctions
 {
 public:
     Texture();
