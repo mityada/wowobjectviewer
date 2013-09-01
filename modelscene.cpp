@@ -171,7 +171,7 @@ void ModelScene::update()
 
 void ModelScene::renderGrid(int size, float step, MVP mvp)
 {
-    if (!m_gridVAO) {
+    if (!m_gridBuffer) {
         ParticleVertex *vertices = new ParticleVertex[4 * size];
 
         for (int i = 0; i < size; i++) {
@@ -198,29 +198,14 @@ void ModelScene::renderGrid(int size, float step, MVP mvp)
             v4.setTexcoord(texcoord);
         }
 
-        m_gridVAO = new QOpenGLVertexArrayObject();
-        m_gridVAO->create();
-        m_gridVAO->bind();
-
         m_gridBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
         m_gridBuffer->create();
         m_gridBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
         m_gridBuffer->bind();
         m_gridBuffer->allocate(vertices, 4 * size * sizeof(ParticleVertex));
+        m_gridBuffer->release();
 
         delete[] vertices;
-
-        m_particleProgram->enableAttributeArray("position");
-        m_particleProgram->setAttributeBuffer("position", GL_FLOAT, 0, 3, sizeof(ParticleVertex));
-
-        m_particleProgram->enableAttributeArray("color");
-        m_particleProgram->setAttributeBuffer("color", GL_FLOAT, 3 * sizeof(float), 4, sizeof(ParticleVertex));
-
-        m_particleProgram->enableAttributeArray("texcoord");
-        m_particleProgram->setAttributeBuffer("texcoord", GL_FLOAT, 7 * sizeof(float), 2, sizeof(ParticleVertex));
-
-        m_gridVAO->release();
-        m_gridBuffer->release();
     }
 
     mvp.model.translate(-step * (size >> 1), -step * (size >> 1), 0.0f);
@@ -229,11 +214,24 @@ void ModelScene::renderGrid(int size, float step, MVP mvp)
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    m_gridVAO->bind();
+    m_gridBuffer->bind();
+
+    m_particleProgram->enableAttributeArray("position");
+    m_particleProgram->setAttributeBuffer("position", GL_FLOAT, 0, 3, sizeof(ParticleVertex));
+
+    m_particleProgram->enableAttributeArray("color");
+    m_particleProgram->setAttributeBuffer("color", GL_FLOAT, 3 * sizeof(float), 4, sizeof(ParticleVertex));
+
+    m_particleProgram->enableAttributeArray("texcoord");
+    m_particleProgram->setAttributeBuffer("texcoord", GL_FLOAT, 7 * sizeof(float), 2, sizeof(ParticleVertex));
 
     glDrawArrays(GL_LINES, 0, 4 * size);
 
-    m_gridVAO->release();
+    m_particleProgram->disableAttributeArray("position");
+    m_particleProgram->disableAttributeArray("color");
+    m_particleProgram->disableAttributeArray("texcoord");
+
+    m_gridBuffer->release();
 }
 
 void ModelScene::updateMouseCoordinates(MVP mvp)

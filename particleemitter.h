@@ -3,7 +3,6 @@
 
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
 
 #include "m2structures.h"
 #include "animatedvalue.h"
@@ -98,7 +97,6 @@ private:
 
     bool m_initialized;
 
-    QOpenGLVertexArrayObject *m_vao;
     QOpenGLBuffer *m_vertexBuffer;
     QOpenGLBuffer *m_indexBuffer;
 };

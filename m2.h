@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QOpenGLShaderProgram>
-#include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QMatrix4x4>
 #include <QTimer>
@@ -24,7 +23,7 @@ class M2 : public QObject
 public:
     explicit M2(const QString &fileName);
 
-    void initialize(QOpenGLShaderProgram *program);
+    void initialize();
     void render(QOpenGLShaderProgram *program, MVP mvp);
     void renderParticles(QOpenGLShaderProgram *program, MVP mvp);
     void update(int timeDelta);
@@ -47,6 +46,9 @@ public:
     }
 
 private:
+    void bindBuffers(QOpenGLShaderProgram *program);
+    void releaseBuffers(QOpenGLShaderProgram *program);
+
     void switchAnimation();
 
     void updateParticleEmitters(int timeDelta);
@@ -102,7 +104,6 @@ private:
     qint32 m_animationState;
     qint32 m_animationOneshot;
 
-    QOpenGLVertexArrayObject *m_vao;
     QOpenGLBuffer *m_vertexBuffer;
     QOpenGLBuffer *m_indexBuffer;
 };

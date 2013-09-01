@@ -62,7 +62,6 @@ private:
     QOpenGLShaderProgram *m_particleProgram;
 
     QOpenGLBuffer *m_gridBuffer;
-    QOpenGLVertexArrayObject *m_gridVAO;
 };
 
 #endif

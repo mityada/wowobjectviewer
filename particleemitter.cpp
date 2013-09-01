@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "particleemitter.h"
@@ -50,7 +51,7 @@ ParticleEmitter::ParticleEmitter(const M2ParticleEmitter &emitter, const quint32
       m_slowdown(emitter.slowdown),
       m_rotation(emitter.rotation),
       m_initialized(false),
-      m_vao(0), m_vertexBuffer(0), m_indexBuffer(0)
+      m_vertexBuffer(0), m_indexBuffer(0)
 {
     if (m_rows == 0)
         m_rows = 1;
@@ -272,6 +273,10 @@ void ParticleEmitter::render(QOpenGLShaderProgram *program, MVP mvp)
     }
 
     glDrawElements(GL_TRIANGLES, 6 * m_particles.size(), GL_UNSIGNED_SHORT, 0);
+
+    program->disableAttributeArray("position");
+    program->disableAttributeArray("color");
+    program->disableAttributeArray("texcoord");
 
     glDepthMask(GL_TRUE);
 
