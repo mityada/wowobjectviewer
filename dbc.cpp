@@ -28,9 +28,61 @@ const char * DBC::getStringBlock() const
     return m_strings;
 }
 
-const DBC AnimationDataDBC::dbc("DBFilesClient/AnimationData.dbc");
-const DBC CreatureDisplayInfoDBC::dbc("DBFilesClient/CreatureDisplayInfo.dbc");
-const DBC CreatureModelDataDBC::dbc("DBFilesClient/CreatureModelData.dbc");
-const DBC SpellVisualDBC::dbc("DBFilesClient/SpellVisual.dbc");
-const DBC SpellVisualKitDBC::dbc("DBFilesClient/SpellVisualKit.dbc");
-const DBC SpellVisualEffectNameDBC::dbc("DBFilesClient/SpellVisualEffectName.dbc");
+AnimationDataDBC::entry AnimationDataDBC::getEntry(quint32 id)
+{
+    static DBC dbc("DBFilesClient/AnimationData.dbc");
+
+    entry e = dbc.getEntry<entry>(id);
+    e.name = dbc.getStringBlock() + quint32(e.name);
+
+    return e;
+}
+
+CreatureDisplayInfoDBC::entry CreatureDisplayInfoDBC::getEntry(quint32 id)
+{
+    static DBC dbc("DBFilesClient/CreatureDisplayInfo.dbc");
+
+    entry e = dbc.getEntry<entry>(id);
+    e.skin1 = dbc.getStringBlock() + quint32(e.skin1);
+    e.skin2 = dbc.getStringBlock() + quint32(e.skin2);
+    e.skin3 = dbc.getStringBlock() + quint32(e.skin3);
+
+    return e;
+}
+
+CreatureModelDataDBC::entry CreatureModelDataDBC::getEntry(quint32 id)
+{
+    static DBC dbc("DBFilesClient/CreatureModelData.dbc");
+
+    entry e = dbc.getEntry<entry>(id);
+    e.model = dbc.getStringBlock() + quint32(e.model);
+
+    return e;
+}
+
+SpellVisualDBC::entry SpellVisualDBC::getEntry(quint32 id)
+{
+    static DBC dbc("DBFilesClient/SpellVisual.dbc");
+
+    return dbc.getEntry<entry>(id);
+}
+
+SpellVisualKitDBC::entry SpellVisualKitDBC::getEntry(quint32 id)
+{
+    static DBC dbc("DBFilesClient/SpellVisualKit.dbc");
+
+    return dbc.getEntry<entry>(id);
+}
+
+SpellVisualEffectNameDBC::entry SpellVisualEffectNameDBC::getEntry(quint32 id)
+{
+    static DBC dbc("DBFilesClient/SpellVisualEffectName.dbc");
+
+    entry e = dbc.getEntry<entry>(id);
+    e.name = dbc.getStringBlock() + quint32(e.name);
+    e.model = dbc.getStringBlock() + quint32(e.model);
+
+    return e;
+}
+
+

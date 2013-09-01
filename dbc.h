@@ -48,30 +48,19 @@ private:
     const char *m_strings;
 };
 
-class AnimationDataDBC
+namespace AnimationDataDBC
 {
-public:
     struct entry
     {
         quint32 id;
         const char *name;
     };
 
-    static entry getEntry(quint32 id)
-    {
-        entry e = dbc.getEntry<entry>(id);
-        e.name = dbc.getStringBlock() + quint32(e.name);
+    entry getEntry(quint32 id);
+}
 
-        return e;
-    }
-
-private:
-    static const DBC dbc;
-};
-
-class CreatureDisplayInfoDBC
+namespace CreatureDisplayInfoDBC
 {
-public:
     struct entry
     {
         quint32 id;
@@ -88,23 +77,11 @@ public:
         quint32 npcSound;
     };
 
-    static entry getEntry(quint32 id)
-    {
-        entry e = dbc.getEntry<entry>(id);
-        e.skin1 = dbc.getStringBlock() + quint32(e.skin1);
-        e.skin2 = dbc.getStringBlock() + quint32(e.skin2);
-        e.skin3 = dbc.getStringBlock() + quint32(e.skin3);
+    entry getEntry(quint32 id);
+}
 
-        return e;
-    }
-
-private:
-    static const DBC dbc;
-};
-
-class CreatureModelDataDBC
+namespace CreatureModelDataDBC
 {
-public:
     struct entry
     {
         quint32 id;
@@ -112,21 +89,11 @@ public:
         const char *model;
     };
 
-    static entry getEntry(quint32 id)
-    {
-        entry e = dbc.getEntry<entry>(id);
-        e.model = dbc.getStringBlock() + quint32(e.model);
+    entry getEntry(quint32 id);
+}
 
-        return e;
-    }
-
-private:
-    static const DBC dbc;
-};
-
-class SpellVisualDBC
+namespace SpellVisualDBC
 {
-public:
     struct entry
     {
         quint32 id;
@@ -139,18 +106,11 @@ public:
         quint32 missile;
     };
 
-    static entry getEntry(quint32 id)
-    {
-        return dbc.getEntry<entry>(id);
-    }
+    entry getEntry(quint32 id);
+}
 
-private:
-    static const DBC dbc;
-};
-
-class SpellVisualKitDBC
+namespace SpellVisualKitDBC
 {
-public:
     struct entry
     {
         quint32 id;
@@ -168,18 +128,11 @@ public:
         qint32 base2;
     };
 
-    static entry getEntry(quint32 id)
-    {
-        return dbc.getEntry<entry>(id);
-    }
+    entry getEntry(quint32 id);
+}
 
-private:
-    static const DBC dbc;
-};
-
-class SpellVisualEffectNameDBC
+namespace SpellVisualEffectNameDBC
 {
-public:
     struct entry
     {
         quint32 id;
@@ -187,17 +140,7 @@ public:
         const char *model;
     };
 
-    static entry getEntry(quint32 id)
-    {
-        entry e = dbc.getEntry<entry>(id);
-        e.name = dbc.getStringBlock() + quint32(e.name);
-        e.model = dbc.getStringBlock() + quint32(e.model);
-
-        return e;
-    }
-
-private:
-    static const DBC dbc;
-};
+    entry getEntry(quint32 id);
+}
 
 #endif
