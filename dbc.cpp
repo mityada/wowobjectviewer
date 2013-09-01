@@ -1,16 +1,14 @@
 #include "dbc.h"
+#include "mpq.h"
 
 DBC::DBC(const QString &fileName)
 {
-    QFile file(fileName);
+    m_data = MPQ::readFile(fileName);
 
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCritical("File '%s' cannot be opened!", qPrintable(fileName));
+    if (m_data.size() == 0) {
+        qCritical("Cannot load DBC '%s'", qPrintable(fileName));
         return;
     }
-
-    m_data = file.readAll();
-    file.close();
 
     m_header = reinterpret_cast<const DBCHeader *>(m_data.constData());
 

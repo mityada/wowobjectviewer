@@ -1,10 +1,9 @@
-#include "texture.h"
-#include "util.h"
-
 #include <QDebug>
-#include <QFile>
 #include <QDir>
 #include <QStringList>
+
+#include "texture.h"
+#include "mpq.h"
 
 Texture::Texture() : m_dirty(false), m_texture(0)
 {
@@ -12,24 +11,12 @@ Texture::Texture() : m_dirty(false), m_texture(0)
 
 bool Texture::load(const QString &fileName)
 {
-    QFile file(fileName);
+    m_data = MPQ::readFile(fileName);
 
-    if (!file.exists())
-        file.setFileName(getLocalFileName(fileName));
-
-    if (!file.exists()) {
-        qCritical("File '%s' does not exist!", qPrintable(fileName));
+    if (m_data.size() == 0) {
+        qCritical("Cannot load texture '%s'", qPrintable(fileName));
         return false;
     }
-
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCritical("File '%s' cannot be opened!", qPrintable(fileName));
-        return false;
-    }
-
-    m_data = file.readAll();
-
-    file.close();
 
     m_header = reinterpret_cast<BLPHeader *>(m_data.data());
 

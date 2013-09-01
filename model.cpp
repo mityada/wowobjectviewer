@@ -32,6 +32,11 @@ void Model::setDisplayId(quint32 displayId)
     CreatureDisplayInfoDBC::entry displayInfo = CreatureDisplayInfoDBC::getEntry(m_displayId);
     CreatureModelDataDBC::entry modelData = CreatureModelDataDBC::getEntry(displayInfo.model);
 
+    if (displayInfo.id != m_displayId) {
+        qDebug("Creature display ID %u does not exist", m_displayId);
+        return;
+    }
+
     m_modelFileName = QString(modelData.model).replace("\\", "/").replace(".mdx", ".m2");
 
     QString modelPath = m_modelFileName.section('/', 0, -2);

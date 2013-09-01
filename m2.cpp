@@ -1,10 +1,9 @@
-#include <QFile>
 #include <QUrl>
 #include <QRegExp>
 
 #include "m2.h"
 #include "dbc.h"
-#include "util.h"
+#include "mpq.h"
 
 M2::M2(const QString &fileName)
     : m_loaded(false),
@@ -15,24 +14,12 @@ M2::M2(const QString &fileName)
       m_animationState(-1),
       m_animationOneshot(-1)
 {
-    QFile file(fileName);
+    m_data = MPQ::readFile(fileName);
 
-    if (!file.exists())
-        file.setFileName(getLocalFileName(fileName));
-
-    if (!file.exists()) {
-        qCritical("File '%s' does not exist!", qPrintable(fileName));
+    if (m_data.size() == 0) {
+        qCritical("Cannot load model '%s'", qPrintable(fileName));
         return;
     }
-
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCritical("File '%s' cannot be opened!", qPrintable(fileName));
-        return;
-    }
-
-    m_data = file.readAll();
-
-    file.close();
 
     m_header = reinterpret_cast<M2Header *>(m_data.data());
 

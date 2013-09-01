@@ -7,6 +7,9 @@ import WoWObjectViewer 1.0
 ApplicationWindow {
     title: "WoW Object Viewer"
 
+    width: 800
+    height: 600
+
     visible: true
 
     Item {

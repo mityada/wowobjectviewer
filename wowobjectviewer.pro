@@ -2,8 +2,6 @@ TEMPLATE = app
 TARGET = wowobjectviewer
 QT += quick
 
-CONFIG += debug
-
 HEADERS += m2structures.h\
            m2.h\
            model.h\
@@ -14,10 +12,10 @@ HEADERS += m2structures.h\
            particleemitter.h\
            mvp.h\
            dbc.h\
-           util.h\
            spellvisualkit.h\
            spellvisual.h\
-           modelscene.h
+           modelscene.h\
+           mpq.h
 
 SOURCES += main.cpp\
            m2.cpp\
@@ -28,9 +26,14 @@ SOURCES += main.cpp\
            particleemitter.cpp\
            mvp.cpp\
            dbc.cpp\
-           util.cpp\
            spellvisualkit.cpp\
            spellvisual.cpp\
-           modelscene.cpp
+           modelscene.cpp\
+           mpq.cpp
+
+unix:LIBS += -lstorm
+
+win32:INCLUDEPATH += StormLib
+win32:LIBS += -L$$PWD/StormLib/ -lStormLib_dll
 
 RESOURCES += wowobjectviewer.qrc

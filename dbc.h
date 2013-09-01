@@ -2,7 +2,6 @@
 #define DBC_H
 
 #include <QString>
-#include <QFile>
 
 #define DBC_MAGIC "WDBC"
 
