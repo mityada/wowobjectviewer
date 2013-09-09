@@ -250,6 +250,27 @@ struct M2Attachment
     M2AnimationBlock data;
 };
 
+struct M2RibbonEmitter
+{
+    qint32 id;
+    qint32 bone;
+    float position[3];
+    quint32 texturesCount;
+    quint32 texturesOffset;
+    quint32 blendingCount;
+    quint32 blendingOffset;
+    M2AnimationBlock color;
+    M2AnimationBlock opacity;
+    M2AnimationBlock above;
+    M2AnimationBlock below;
+    float segments;
+    float length;
+    float angle;
+    qint16 renderFlags[2];
+    M2AnimationBlock unknown1;
+    M2AnimationBlock unknown2;
+};
+
 struct M2ParticleEmitter
 {
     qint32 id;

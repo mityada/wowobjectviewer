@@ -10,6 +10,7 @@ HEADERS += m2structures.h\
            bone.h\
            textureanimation.h\
            particleemitter.h\
+           ribbonemitter.h\
            mvp.h\
            dbc.h\
            spellvisualkit.h\
@@ -24,6 +25,7 @@ SOURCES += main.cpp\
            bone.cpp\
            textureanimation.cpp\
            particleemitter.cpp\
+           ribbonemitter.cpp\
            mvp.cpp\
            dbc.cpp\
            spellvisualkit.cpp\

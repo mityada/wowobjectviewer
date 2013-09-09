@@ -112,6 +112,11 @@ M2::M2(const QString &fileName)
             m_attachments[i] = &attachments[attachmentLookup[i]];
     }
 
+    M2RibbonEmitter *ribbonEmitters = reinterpret_cast<M2RibbonEmitter *>(m_data.data() + m_header->ribbonEmittersOffset);
+
+    for (quint32 i = 0; i < m_header->ribbonEmittersCount; i++)
+        m_ribbonEmitters << RibbonEmitter(ribbonEmitters[i], m_sequences, m_data);
+
     M2ParticleEmitter *particleEmitters = reinterpret_cast<M2ParticleEmitter *>(m_data.data() + m_header->particleEmittersOffset);
 
     for (quint32 i = 0; i < m_header->particleEmittersCount; i++)
@@ -306,6 +311,15 @@ void M2::render(QOpenGLShaderProgram *program, MVP mvp)
 
 void M2::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
 {
+    for (int i = 0; i < m_ribbonEmitters.size(); i++) {
+        qint32 texture = m_ribbonEmitters[i].getTextureId();
+
+        if (texture != -1)
+            m_textures[texture].bind();
+
+        m_ribbonEmitters[i].render(program, mvp);
+    }
+
     for (int i = 0; i < m_particleEmitters.size(); i++) {
         qint16 texture = m_particleEmitters[i].getTextureId();
 
@@ -378,14 +392,23 @@ void M2::update(int timeDelta)
             }
         }
 
-        updateParticleEmitters(timeDelta);
+        updateEmitters(timeDelta);
     }
 
     updateAttachments(timeDelta);
 }
 
-void M2::updateParticleEmitters(int timeDelta)
+void M2::updateEmitters(int timeDelta)
 {
+    for (int i = 0; i < m_ribbonEmitters.size(); i++) {
+        qint32 bone = m_ribbonEmitters[i].getBoneId();
+        QMatrix4x4 boneMatrix;
+        if (bone != -1)
+            boneMatrix = m_bones[bone].getMatrix(m_animation, m_time, MVP());
+
+        m_ribbonEmitters[i].update(m_animation, m_time, boneMatrix);
+    }
+
     for (int i = 0; i < m_particleEmitters.size(); i++) {
         qint16 bone = m_particleEmitters[i].getBoneId();
         QMatrix4x4 boneMatrix;

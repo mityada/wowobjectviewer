@@ -11,6 +11,7 @@
 #include "texture.h"
 #include "textureanimation.h"
 #include "bone.h"
+#include "ribbonemitter.h"
 #include "particleemitter.h"
 #include "mvp.h"
 
@@ -51,7 +52,7 @@ private:
 
     void switchAnimation();
 
-    void updateParticleEmitters(int timeDelta);
+    void updateEmitters(int timeDelta);
     void updateAttachments(int timeDelta);
 
     void renderAttachments(QOpenGLShaderProgram *program, MVP mvp);
@@ -91,6 +92,7 @@ private:
     QHash<quint32, M2Attachment *> m_attachments;
     QMultiHash<quint32, M2 *> m_attachedModels;
 
+    QList<RibbonEmitter> m_ribbonEmitters;
     QList<ParticleEmitter> m_particleEmitters;
 
     quint32 *m_sequences;
