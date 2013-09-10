@@ -1,6 +1,6 @@
 #include "spellvisual.h"
 
-SpellVisual::SpellVisual()
+SpellVisual::SpellVisual() : m_caster(0), m_target(0)
 {
     m_visual.id = 0;
 

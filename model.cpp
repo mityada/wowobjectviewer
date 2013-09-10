@@ -25,6 +25,11 @@ void Model::removeSpellVisualKit(quint32 id)
         it.value().detach();
 }
 
+quint32 Model::displayId() const
+{
+    return m_displayId;
+}
+
 void Model::setDisplayId(quint32 displayId)
 {
     m_displayId = displayId;
@@ -46,6 +51,36 @@ void Model::setDisplayId(quint32 displayId)
     m_textureFileNames[13] = modelPath + "/" + QString(displayInfo.skin3) + ".blp";
 
     m_modelChanged = true;
+}
+
+float Model::x() const
+{
+    return m_x;
+}
+
+float Model::y() const
+{
+    return m_y;
+}
+
+float Model::orientation() const
+{
+    return m_orientation;
+}
+
+void Model::setX(float x)
+{
+    m_x = x;
+}
+
+void Model::setY(float y)
+{
+    m_y = y;
+}
+
+void Model::setOrientation(float orientation)
+{
+    m_orientation = orientation;
 }
 
 void Model::update(int timeDelta)
@@ -76,7 +111,7 @@ void Model::update(int timeDelta)
     updateVisualKits();
 }
 
-void Model::render(QOpenGLShaderProgram *program, MVP mvp)
+void Model::render(QGLShaderProgram *program, MVP mvp)
 {
     mvp.model.translate(m_x, m_y, 0.0f);
     mvp.model.rotate(m_orientation, 0.0f, 0.0f, 1.0f);
@@ -85,7 +120,7 @@ void Model::render(QOpenGLShaderProgram *program, MVP mvp)
         m_model->render(program, mvp);
 }
 
-void Model::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
+void Model::renderParticles(QGLShaderProgram *program, MVP mvp)
 {
     mvp.model.translate(m_x, m_y, 0.0f);
     mvp.model.rotate(m_orientation, 0.0f, 0.0f, 1.0f);

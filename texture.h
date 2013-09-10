@@ -1,7 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <QOpenGLFunctions>
+#include <QGLFunctions>
 
 #define BLP_MAGIC "BLP2"
 
@@ -19,7 +19,7 @@ struct BLPHeader
     quint32 mipmapLength[16];
 };
 
-class Texture : public QOpenGLFunctions
+class Texture : public QGLFunctions
 {
 public:
     Texture();

@@ -72,7 +72,7 @@ void Texture::create()
     if (!m_texture)
         glGenTextures(1, &m_texture);
 
-    initializeOpenGLFunctions();
+    initializeGLFunctions();
 
     glBindTexture(GL_TEXTURE_2D, m_texture);
 

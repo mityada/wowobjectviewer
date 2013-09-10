@@ -1,17 +1,23 @@
-#include <QtQuick/QQuickWindow>
 #include <QMatrix4x4>
+#include <QMouseEvent>
 
 #include "modelscene.h"
 #include "mvp.h"
 
-ModelScene::ModelScene()
-    : m_rotationX(0.0f),
-      m_rotationY(0.0f),
-      m_distance(20.0f),
-      m_program(0),
-      m_particleProgram(0)
+ModelScene::ModelScene(QWidget *parent) : QGLWidget(parent),
+    m_rotationX(0.0f),
+    m_rotationY(0.0f),
+    m_distance(0.0f),
+    m_program(0),
+    m_particleProgram(0),
+    m_gridBuffer(0)
 {
-    connect(this, SIGNAL(windowChanged(QQuickWindow *)), this, SLOT(handleWindowChanged(QQuickWindow *)));
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setMouseTracking(true);
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(0);
 }
 
 void ModelScene::setRotationX(float rotation)
@@ -52,6 +58,21 @@ Model * ModelScene::selectedModel()
     return 0;
 }
 
+float ModelScene::worldX() const
+{
+    return m_worldX;
+}
+
+float ModelScene::worldY() const
+{
+    return m_worldY;
+}
+
+float ModelScene::worldZ() const
+{
+    return m_worldZ;
+}
+
 void ModelScene::addModel(Model *model)
 {
     if (!model)
@@ -65,54 +86,35 @@ void ModelScene::removeModel(Model *model)
     m_models.removeOne(model);
 }
 
-void ModelScene::handleWindowChanged(QQuickWindow *win)
+void ModelScene::initializeGL()
 {
-    if (win) {
-        connect(win, SIGNAL(afterRendering()), this, SLOT(paint()), Qt::DirectConnection);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        QTimer *timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), this, SLOT(update()), Qt::DirectConnection);
-        timer->start(0);
-
-        m_time.start();
-    }
-}
-
-void ModelScene::paint()
-{
-    int timeDelta = m_time.restart();
-
-    for (int i = 0; i < m_models.size(); i++)
-        m_models[i]->update(timeDelta);
-
-    if (!m_program) {
-        m_program = new QOpenGLShaderProgram();
-        m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader.vs");
-        m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shader.fs");
-        m_program->link();
-
-        m_particleProgram = new QOpenGLShaderProgram();
-        m_particleProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/particle.vs");
-        m_particleProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/particle.fs");
-        m_particleProgram->link();
-
-        const GLubyte white[3] = {255, 255, 255};
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, white); 
-    }
-
-    QPointF position = mapToScene(QPointF(0, height()));
-    glViewport(position.x(), window()->height() - position.y(), width(), height());
-
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(position.x(), window()->height() - position.y(), width(), height());
-
+    glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    m_program = new QGLShaderProgram();
+    m_program->addShaderFromSourceFile(QGLShader::Vertex, ":/shader.vs");
+    m_program->addShaderFromSourceFile(QGLShader::Fragment, ":/shader.fs");
+    m_program->link();
+
+    m_particleProgram = new QGLShaderProgram();
+    m_particleProgram->addShaderFromSourceFile(QGLShader::Vertex, ":/particle.vs");
+    m_particleProgram->addShaderFromSourceFile(QGLShader::Fragment, ":/particle.fs");
+    m_particleProgram->link();
+
+    const GLubyte white[3] = {255, 255, 255};
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, white); 
+
+    m_time.start();
+}
+
+void ModelScene::paintGL()
+{
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     MVP mvp;
@@ -144,9 +146,7 @@ void ModelScene::paint()
 
     glDisable(GL_STENCIL_TEST);
 
-    position = mapToScene(QPointF(0, 0));
-
-    glReadPixels(position.x() + m_mouseX, window()->height() - position.y() - m_mouseY, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &m_selection);
+    glReadPixels(m_mouseX, height() - m_mouseY, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &m_selection);
 
     m_program->release();
 
@@ -159,14 +159,45 @@ void ModelScene::paint()
 
     m_particleProgram->release();
 
-    glDepthMask(GL_FALSE);
-
     updateMouseCoordinates(mvp);
+}
+
+void ModelScene::resizeGL(int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
+void ModelScene::mousePressEvent(QMouseEvent *event)
+{
+    emit mousePressed(event);
+}
+
+void ModelScene::mouseReleaseEvent(QMouseEvent *event)
+{
+    emit mouseReleased(event);
+}
+
+void ModelScene::mouseMoveEvent(QMouseEvent *event)
+{
+    m_mouseX = event->x();
+    m_mouseY = event->y();
+
+    emit mouseMoved(event);
+}
+
+void ModelScene::wheelEvent(QWheelEvent *event)
+{
+    emit wheelRotated(event);
 }
 
 void ModelScene::update()
 {
-    window()->update();
+    int timeDelta = m_time.restart();
+
+    for (int i = 0; i < m_models.size(); i++)
+        m_models[i]->update(timeDelta);
+
+    updateGL();
 }
 
 void ModelScene::renderGrid(int size, float step, MVP mvp)
@@ -198,9 +229,9 @@ void ModelScene::renderGrid(int size, float step, MVP mvp)
             v4.setTexcoord(texcoord);
         }
 
-        m_gridBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+        m_gridBuffer = new QGLBuffer(QGLBuffer::VertexBuffer);
         m_gridBuffer->create();
-        m_gridBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+        m_gridBuffer->setUsagePattern(QGLBuffer::StaticDraw);
         m_gridBuffer->bind();
         m_gridBuffer->allocate(vertices, 4 * size * sizeof(ParticleVertex));
         m_gridBuffer->release();

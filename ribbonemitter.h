@@ -1,8 +1,8 @@
 #ifndef RIBBON_EMITTER_H
 #define RIBBON_EMITTER_H
 
-#include <QOpenGLShaderProgram>
-#include <QOpenGLBuffer>
+#include <QGLShaderProgram>
+#include <QGLBuffer>
 
 #include "m2structures.h"
 #include "animatedvalue.h"
@@ -21,7 +21,7 @@ public:
     RibbonEmitter(const M2RibbonEmitter &emitter, const quint32 *sequences, const QByteArray &data);
 
     void update(quint32 animation, quint32 time, QMatrix4x4 boneMatrix);
-    void render(QOpenGLShaderProgram *program, MVP mvp);
+    void render(QGLShaderProgram *program, MVP mvp);
 
     qint32 getBoneId() const;
     qint32 getTextureId() const;
@@ -43,7 +43,7 @@ private:
 
     QList<Ribbon> m_ribbons;
     ParticleVertex *m_vertices;
-    QOpenGLBuffer *m_vertexBuffer;
+    QGLBuffer *m_vertexBuffer;
 
     bool m_initialized;
 };

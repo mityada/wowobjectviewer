@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = wowobjectviewer
-QT += quick
+QT += opengl
 
 HEADERS += m2structures.h\
            m2.h\
@@ -16,7 +16,8 @@ HEADERS += m2structures.h\
            spellvisualkit.h\
            spellvisual.h\
            modelscene.h\
-           mpq.h
+           mpq.h\
+           window.h
 
 SOURCES += main.cpp\
            m2.cpp\
@@ -31,7 +32,8 @@ SOURCES += main.cpp\
            spellvisualkit.cpp\
            spellvisual.cpp\
            modelscene.cpp\
-           mpq.cpp
+           mpq.cpp\
+           window.cpp
 
 unix:LIBS += -lstorm
 

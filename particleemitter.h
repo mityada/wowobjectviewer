@@ -1,8 +1,8 @@
 #ifndef PARTICLE_EMITTER_H
 #define PARTICLE_EMITTER_H
 
-#include <QOpenGLShaderProgram>
-#include <QOpenGLBuffer>
+#include <QGLShaderProgram>
+#include <QGLBuffer>
 
 #include "m2structures.h"
 #include "animatedvalue.h"
@@ -55,7 +55,7 @@ public:
     ParticleEmitter(const M2ParticleEmitter &emitter, const quint32 *sequences, const QByteArray &data);
 
     void update(quint32 animation, quint32 time, float timeDelta, QMatrix4x4 boneMatrix = QMatrix4x4());
-    void render(QOpenGLShaderProgram *program, MVP mvp);
+    void render(QGLShaderProgram *program, MVP mvp);
 
     qint16 getBoneId();
     qint16 getTextureId();
@@ -97,8 +97,8 @@ private:
 
     bool m_initialized;
 
-    QOpenGLBuffer *m_vertexBuffer;
-    QOpenGLBuffer *m_indexBuffer;
+    QGLBuffer *m_vertexBuffer;
+    QGLBuffer *m_indexBuffer;
 };
 
 #endif

@@ -1,27 +1,24 @@
 #ifndef MODEL_SCENE_H
 #define MODEL_SCENE_H
 
-#include <QtQuick/QQuickItem>
-#include <QOpenGLShaderProgram>
+#include <QGLWidget>
 #include <QTime>
 
 #include "model.h"
 
-class ModelScene : public QQuickItem
+class ModelScene : public QGLWidget
 {
     Q_OBJECT
     Q_PROPERTY(float rotationX READ rotationX WRITE setRotationX)
     Q_PROPERTY(float rotationY READ rotationY WRITE setRotationY)
     Q_PROPERTY(float distance READ distance WRITE setDistance)
-    Q_PROPERTY(int mouseX MEMBER m_mouseX)
-    Q_PROPERTY(int mouseY MEMBER m_mouseY)
     Q_PROPERTY(Model * selectedModel READ selectedModel)
-    Q_PROPERTY(float worldX MEMBER m_worldX)
-    Q_PROPERTY(float worldY MEMBER m_worldY)
-    Q_PROPERTY(float worldZ MEMBER m_worldZ)
+    Q_PROPERTY(float worldX READ worldX)
+    Q_PROPERTY(float worldY READ worldY)
+    Q_PROPERTY(float worldZ READ worldZ)
 
 public:
-    ModelScene();
+    ModelScene(QWidget *parent = 0);
 
     void setRotationX(float rotation);
     void setRotationY(float rotation);
@@ -30,17 +27,34 @@ public:
     float rotationX() const;
     float rotationY() const;
     float distance() const;
+
     Model * selectedModel();
+
+    float worldX() const;
+    float worldY() const;
+    float worldZ() const;
 
     Q_INVOKABLE void addModel(Model *model);
     Q_INVOKABLE void removeModel(Model *model);
 
-public slots:
-    void paint();
-    void update();
+signals:
+    void mousePressed(QMouseEvent *event);
+    void mouseReleased(QMouseEvent *event);
+    void mouseMoved(QMouseEvent *event);
+    void wheelRotated(QWheelEvent *event);
+
+protected:
+    void initializeGL();
+    void paintGL();
+    void resizeGL(int width, int height);
+
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
 private slots:
-    void handleWindowChanged(QQuickWindow *win);
+    void update();
 
 private:
     void renderGrid(int size, float step, MVP mvp);
@@ -58,10 +72,10 @@ private:
 
     float m_worldX, m_worldY, m_worldZ;
 
-    QOpenGLShaderProgram *m_program;
-    QOpenGLShaderProgram *m_particleProgram;
+    QGLShaderProgram *m_program;
+    QGLShaderProgram *m_particleProgram;
 
-    QOpenGLBuffer *m_gridBuffer;
+    QGLBuffer *m_gridBuffer;
 };
 
 #endif

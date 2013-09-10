@@ -66,14 +66,14 @@ void RibbonEmitter::update(quint32 animation, quint32 time, QMatrix4x4 boneMatri
 
 void RibbonEmitter::initialize()
 {
-    m_vertexBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    m_vertexBuffer = new QGLBuffer(QGLBuffer::VertexBuffer);
     m_vertexBuffer->create();
-    m_vertexBuffer->setUsagePattern(QOpenGLBuffer::StreamDraw);
+    m_vertexBuffer->setUsagePattern(QGLBuffer::StreamDraw);
 
     m_initialized = true;
 }
 
-void RibbonEmitter::render(QOpenGLShaderProgram *program, MVP mvp)
+void RibbonEmitter::render(QGLShaderProgram *program, MVP mvp)
 {
     if (!m_initialized)
         initialize();
@@ -109,6 +109,7 @@ void RibbonEmitter::render(QOpenGLShaderProgram *program, MVP mvp)
 
     glDepthMask(GL_TRUE);
 
+    glDisable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_vertexBuffer->release();

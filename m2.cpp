@@ -127,16 +127,16 @@ M2::M2(const QString &fileName)
 
 void M2::initialize()
 {
-    m_vertexBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    m_vertexBuffer = new QGLBuffer(QGLBuffer::VertexBuffer);
     m_vertexBuffer->create();
-    m_vertexBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+    m_vertexBuffer->setUsagePattern(QGLBuffer::StaticDraw);
     m_vertexBuffer->bind();
     m_vertexBuffer->allocate(m_vertices, m_header->verticesCount * sizeof(M2Vertex));
     m_vertexBuffer->release();
 
-    m_indexBuffer = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    m_indexBuffer = new QGLBuffer(QGLBuffer::IndexBuffer);
     m_indexBuffer->create();
-    m_indexBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+    m_indexBuffer->setUsagePattern(QGLBuffer::StaticDraw);
     m_indexBuffer->bind();
     m_indexBuffer->allocate(m_indices, m_indicesCount * sizeof(GLushort)); 
     m_indexBuffer->release();
@@ -144,7 +144,7 @@ void M2::initialize()
     m_initialized = true;
 }
 
-void M2::bindBuffers(QOpenGLShaderProgram *program)
+void M2::bindBuffers(QGLShaderProgram *program)
 {
     m_vertexBuffer->bind();
     m_indexBuffer->bind();
@@ -175,7 +175,7 @@ void M2::bindBuffers(QOpenGLShaderProgram *program)
     program->setAttributeBuffer("texcoord", GL_FLOAT, offset, 2, sizeof(M2Vertex));
 }
 
-void M2::releaseBuffers(QOpenGLShaderProgram *program)
+void M2::releaseBuffers(QGLShaderProgram *program)
 {
     program->disableAttributeArray("position");
     program->disableAttributeArray("boneweights");
@@ -187,7 +187,7 @@ void M2::releaseBuffers(QOpenGLShaderProgram *program)
     m_indexBuffer->release();
 }
 
-void M2::render(QOpenGLShaderProgram *program, MVP mvp)
+void M2::render(QGLShaderProgram *program, MVP mvp)
 {
     if (!m_loaded)
         return;
@@ -309,7 +309,7 @@ void M2::render(QOpenGLShaderProgram *program, MVP mvp)
     renderAttachments(program, mvp);
 }
 
-void M2::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
+void M2::renderParticles(QGLShaderProgram *program, MVP mvp)
 {
     for (int i = 0; i < m_ribbonEmitters.size(); i++) {
         qint32 texture = m_ribbonEmitters[i].getTextureId();
@@ -332,7 +332,7 @@ void M2::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
     renderAttachmentsParticles(program, mvp);
 }
 
-void M2::renderAttachments(QOpenGLShaderProgram *program, MVP mvp)
+void M2::renderAttachments(QGLShaderProgram *program, MVP mvp)
 {
     QMultiHash<quint32, M2 *>::iterator it = m_attachedModels.begin();
 
@@ -352,7 +352,7 @@ void M2::renderAttachments(QOpenGLShaderProgram *program, MVP mvp)
     }
 }
 
-void M2::renderAttachmentsParticles(QOpenGLShaderProgram *program, MVP mvp)
+void M2::renderAttachmentsParticles(QGLShaderProgram *program, MVP mvp)
 {
     QMultiHash<quint32, M2 *>::iterator it = m_attachedModels.begin();
 

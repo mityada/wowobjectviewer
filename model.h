@@ -2,7 +2,6 @@
 #define MODEL_H
 
 #include <QObject>
-#include <QOpenGLShaderProgram>
 
 #include "m2.h"
 #include "spellvisualkit.h"
@@ -10,10 +9,10 @@
 class Model : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(quint32 displayId MEMBER m_displayId WRITE setDisplayId)
-    Q_PROPERTY(float x MEMBER m_x)
-    Q_PROPERTY(float y MEMBER m_y)
-    Q_PROPERTY(float orientation MEMBER m_orientation)
+    Q_PROPERTY(quint32 displayId READ displayId WRITE setDisplayId)
+    Q_PROPERTY(float x READ x WRITE setX)
+    Q_PROPERTY(float y READ y WRITE setY)
+    Q_PROPERTY(float orientation READ orientation WRITE setOrientation)
 
 public:
     Model();
@@ -21,11 +20,20 @@ public:
     Q_INVOKABLE void addSpellVisualKit(quint32 id, bool oneshot = false);
     Q_INVOKABLE void removeSpellVisualKit(quint32 id);
 
+    quint32 displayId() const;
     void setDisplayId(quint32 displayId);
 
+    float x() const;
+    float y() const;
+    float orientation() const;
+
+    void setX(float x);
+    void setY(float y);
+    void setOrientation(float orientation);
+
     void update(int timeDelta);
-    void render(QOpenGLShaderProgram *program, MVP mvp);
-    void renderParticles(QOpenGLShaderProgram *program, MVP mvp);
+    void render(QGLShaderProgram *program, MVP mvp);
+    void renderParticles(QGLShaderProgram *program, MVP mvp);
 
 private:
     void updateVisualKits();

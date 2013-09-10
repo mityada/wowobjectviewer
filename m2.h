@@ -2,8 +2,6 @@
 #define M2_H
 
 #include <QObject>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLBuffer>
 #include <QMatrix4x4>
 #include <QTimer>
 
@@ -25,8 +23,8 @@ public:
     explicit M2(const QString &fileName);
 
     void initialize();
-    void render(QOpenGLShaderProgram *program, MVP mvp);
-    void renderParticles(QOpenGLShaderProgram *program, MVP mvp);
+    void render(QGLShaderProgram *program, MVP mvp);
+    void renderParticles(QGLShaderProgram *program, MVP mvp);
     void update(int timeDelta);
 
     void setAnimation(qint32 animation, bool forceOneshot = false);
@@ -47,16 +45,16 @@ public:
     }
 
 private:
-    void bindBuffers(QOpenGLShaderProgram *program);
-    void releaseBuffers(QOpenGLShaderProgram *program);
+    void bindBuffers(QGLShaderProgram *program);
+    void releaseBuffers(QGLShaderProgram *program);
 
     void switchAnimation();
 
     void updateEmitters(int timeDelta);
     void updateAttachments(int timeDelta);
 
-    void renderAttachments(QOpenGLShaderProgram *program, MVP mvp);
-    void renderAttachmentsParticles(QOpenGLShaderProgram *program, MVP mvp);
+    void renderAttachments(QGLShaderProgram *program, MVP mvp);
+    void renderAttachmentsParticles(QGLShaderProgram *program, MVP mvp);
 
     QByteArray m_data;
 
@@ -106,8 +104,8 @@ private:
     qint32 m_animationState;
     qint32 m_animationOneshot;
 
-    QOpenGLBuffer *m_vertexBuffer;
-    QOpenGLBuffer *m_indexBuffer;
+    QGLBuffer *m_vertexBuffer;
+    QGLBuffer *m_indexBuffer;
 };
 
 #endif

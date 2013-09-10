@@ -163,18 +163,18 @@ void ParticleEmitter::update(quint32 animation, quint32 time, float timeDelta, Q
 
 void ParticleEmitter::initialize()
 {
-    m_vertexBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    m_vertexBuffer = new QGLBuffer(QGLBuffer::VertexBuffer);
     m_vertexBuffer->create();
-    m_vertexBuffer->setUsagePattern(QOpenGLBuffer::StreamDraw);
+    m_vertexBuffer->setUsagePattern(QGLBuffer::StreamDraw);
 
-    m_indexBuffer = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    m_indexBuffer = new QGLBuffer(QGLBuffer::IndexBuffer);
     m_indexBuffer->create();
-    m_indexBuffer->setUsagePattern(QOpenGLBuffer::StreamDraw);
+    m_indexBuffer->setUsagePattern(QGLBuffer::StreamDraw);
 
     m_initialized = true;
 }
 
-void ParticleEmitter::render(QOpenGLShaderProgram *program, MVP mvp)
+void ParticleEmitter::render(QGLShaderProgram *program, MVP mvp)
 {
     if (!m_initialized)
         initialize();
