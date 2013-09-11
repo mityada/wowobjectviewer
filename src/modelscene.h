@@ -4,7 +4,12 @@
 #include <QGLWidget>
 #include <QTime>
 
-#include "model.h"
+#include "mvp.h"
+
+class QGLShaderProgram;
+class QGLBuffer;
+
+class Model;
 
 class ModelScene : public QGLWidget
 {

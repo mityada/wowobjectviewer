@@ -7,7 +7,12 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    MPQ::gameDir() = app.applicationDirPath() + "/";
+    QStringList args = app.arguments();
+
+    if (args.size() > 1)
+        MPQ::gameDir() = args.at(1);
+    else
+        MPQ::gameDir() = app.applicationDirPath() + "/";
 
     Window window;
     window.show();

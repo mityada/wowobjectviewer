@@ -3,8 +3,12 @@
 
 #include <QObject>
 
-#include "m2.h"
+#include "mvp.h"
 #include "spellvisualkit.h"
+
+class QGLShaderProgram;
+
+class M2;
 
 class Model : public QObject
 {
