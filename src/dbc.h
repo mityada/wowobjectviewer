@@ -22,6 +22,9 @@ public:
     template <typename T>
     T getEntry(quint32 id) const
     {
+        if (!m_header)
+            return T();
+
         for (quint32 i = 0; i < m_header->recordCount; i++) {
             T entry = getRecord<T>(i);
 

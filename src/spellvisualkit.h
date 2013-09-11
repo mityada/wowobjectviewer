@@ -1,8 +1,11 @@
 #ifndef SPELL_VISUAL_KIT
 #define SPELL_VISUAL_KIT
 
-#include "m2.h"
+#include <QHash>
+
 #include "dbc.h"
+
+class M2;
 
 class SpellVisualKit
 {

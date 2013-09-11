@@ -1,3 +1,5 @@
+#include <QTimer>
+
 #include "spellvisual.h"
 
 SpellVisual::SpellVisual()

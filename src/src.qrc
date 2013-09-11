@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
         <file>shader.vs</file>
         <file>shader.fs</file>
         <file>particle.vs</file>

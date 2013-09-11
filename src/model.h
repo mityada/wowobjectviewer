@@ -2,10 +2,13 @@
 #define MODEL_H
 
 #include <QObject>
-#include <QOpenGLShaderProgram>
 
-#include "m2.h"
+#include "mvp.h"
 #include "spellvisualkit.h"
+
+class QOpenGLShaderProgram;
+
+class M2;
 
 class Model : public QObject
 {

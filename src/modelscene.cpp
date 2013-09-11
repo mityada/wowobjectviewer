@@ -1,8 +1,12 @@
 #include <QtQuick/QQuickWindow>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
 #include <QMatrix4x4>
+#include <QTimer>
 
 #include "modelscene.h"
-#include "mvp.h"
+#include "model.h"
+#include "particleemitter.h"
 
 ModelScene::ModelScene()
     : m_rotationX(0.0f),

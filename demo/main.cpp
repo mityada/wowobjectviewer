@@ -10,7 +10,12 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    MPQ::gameDir() = app.applicationDirPath() + "/";
+    QStringList args = app.arguments();
+
+    if (args.size() > 1)
+        MPQ::gameDir() = args.at(1);
+    else
+        MPQ::gameDir() = app.applicationDirPath() + "/";
 
     qmlRegisterType<ModelScene>("WoWObjectViewer", 1, 0, "ModelScene");
     qmlRegisterType<Model>("WoWObjectViewer", 1, 0, "Model");

@@ -2,10 +2,14 @@
 #define MODEL_SCENE_H
 
 #include <QtQuick/QQuickItem>
-#include <QOpenGLShaderProgram>
 #include <QTime>
 
-#include "model.h"
+#include "mvp.h"
+
+class QOpenGLShaderProgram;
+class QOpenGLBuffer;
+
+class Model;
 
 class ModelScene : public QQuickItem
 {

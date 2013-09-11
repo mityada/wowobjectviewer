@@ -1,6 +1,7 @@
 #include <QRegExp>
 
 #include "spellvisualkit.h"
+#include "m2.h"
 
 SpellVisualKit::SpellVisualKit(quint32 id, bool oneshot)
     : m_kit(SpellVisualKitDBC::getEntry(id)),
