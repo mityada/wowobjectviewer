@@ -4,6 +4,7 @@
 #include <QGLWidget>
 #include <QTime>
 
+#include "global.h"
 #include "mvp.h"
 
 class QGLShaderProgram;
@@ -11,7 +12,7 @@ class QGLBuffer;
 
 class Model;
 
-class ModelScene : public QGLWidget
+class WOV_EXPORT ModelScene : public QGLWidget
 {
     Q_OBJECT
     Q_PROPERTY(float rotationX READ rotationX WRITE setRotationX)
