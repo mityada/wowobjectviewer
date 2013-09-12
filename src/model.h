@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+#include "global.h"
 #include "mvp.h"
 #include "spellvisualkit.h"
 
@@ -10,7 +11,7 @@ class QOpenGLShaderProgram;
 
 class M2;
 
-class Model : public QObject
+class WOV_EXPORT Model : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(quint32 displayId MEMBER m_displayId WRITE setDisplayId)

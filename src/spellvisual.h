@@ -3,10 +3,11 @@
 
 #include <QObject>
 
+#include "global.h"
 #include "dbc.h"
 #include "model.h"
 
-class SpellVisual : public QObject
+class WOV_EXPORT SpellVisual : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(quint32 visual READ visual WRITE setVisual)

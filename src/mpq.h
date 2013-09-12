@@ -4,11 +4,12 @@
 #include <QByteArray>
 #include <QString>
 
+#include "global.h"
 #include "StormLib.h"
 
 namespace MPQ
 {
-    QString & gameDir();
+    WOV_EXPORT QString & gameDir();
     QByteArray readFile(const QString &fileName);
 };
 

@@ -5,6 +5,21 @@
 #include "texture.h"
 #include "mpq.h"
 
+#ifndef GL_COMPRESSED_RGB_S3TC_DXT1_EXT
+#  define GL_COMPRESSED_RGB_S3TC_DXT1_EXT   0x83F0
+#  define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT  0x83F1
+#  define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT  0x83F2
+#  define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT  0x83F3
+#endif
+
+#ifndef GL_BGRA
+#  define GL_BGRA                           0x80E1
+#endif
+
+#ifndef GL_TEXTURE_MAX_LEVEL
+#  define GL_TEXTURE_MAX_LEVEL              0x813D
+#endif
+
 Texture::Texture() : m_dirty(false), m_texture(0)
 {
 }

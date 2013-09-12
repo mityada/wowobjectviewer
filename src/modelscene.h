@@ -4,6 +4,7 @@
 #include <QtQuick/QQuickItem>
 #include <QTime>
 
+#include "global.h"
 #include "mvp.h"
 
 class QOpenGLShaderProgram;
@@ -11,7 +12,7 @@ class QOpenGLBuffer;
 
 class Model;
 
-class ModelScene : public QQuickItem
+class WOV_EXPORT ModelScene : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(float rotationX READ rotationX WRITE setRotationX)

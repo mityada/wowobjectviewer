@@ -2,6 +2,8 @@ TEMPLATE = lib
 TARGET = wov
 QT += quick
 
+DEFINES += WOV_LIBRARY
+
 HEADERS += m2structures.h\
           m2.h\
           model.h\
@@ -16,7 +18,8 @@ HEADERS += m2structures.h\
           spellvisualkit.h\
           spellvisual.h\
           modelscene.h\
-          mpq.h
+          mpq.h\
+          global.h
 
 SOURCES += m2.cpp\
           model.cpp\
