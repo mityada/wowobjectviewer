@@ -3,9 +3,9 @@
 
 #include <QWidget>
 
-#include "spellvisual.h"
-
+class Model;
 class ModelScene;
+class SpellVisual;
 class QLineEdit;
 
 class Window : public QWidget
@@ -35,7 +35,7 @@ private:
     int m_mouseX, m_mouseY;
     float m_worldX, m_worldY, m_worldZ;
 
-    SpellVisual m_visual;
+    SpellVisual *m_visual;
 
     QLineEdit *m_displayEdit;
     QLineEdit *m_visualEdit;

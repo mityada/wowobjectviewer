@@ -5,11 +5,12 @@
 
 #include "global.h"
 #include "mvp.h"
-#include "spellvisualkit.h"
 
 class QGLShaderProgram;
 
 class M2;
+class ModelScene;
+class SpellVisualKit;
 
 class WOV_EXPORT Model : public QObject
 {
@@ -20,7 +21,7 @@ class WOV_EXPORT Model : public QObject
     Q_PROPERTY(float orientation READ orientation WRITE setOrientation)
 
 public:
-    Model();
+    Model(ModelScene *scene);
 
     Q_INVOKABLE void addSpellVisualKit(quint32 id, bool oneshot = false);
     Q_INVOKABLE void removeSpellVisualKit(quint32 id);
@@ -43,6 +44,8 @@ public:
 private:
     void updateVisualKits();
 
+    ModelScene *m_scene;
+
     quint32 m_displayId;
     float m_x, m_y, m_orientation;
 
@@ -51,7 +54,7 @@ private:
     QString m_modelFileName;
     QHash<quint32, QString> m_textureFileNames;
 
-    QHash<quint32, SpellVisualKit> m_visualKits;
+    QHash<quint32, SpellVisualKit *> m_visualKits;
 };
 
 #endif

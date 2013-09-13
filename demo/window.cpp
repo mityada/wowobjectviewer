@@ -2,13 +2,16 @@
 
 #include "window.h"
 #include "modelscene.h"
+#include "spellvisual.h"
 
-Window::Window() : m_selection(0), m_drag(0)
+Window::Window() : m_selection(0), m_drag(0), m_visual(0)
 {
     m_scene = new ModelScene;
-    m_scene->setRotationX(45.0f);
-    m_scene->setRotationY(-20.0f);
+    m_scene->setRotationX(-45.0f);
+    m_scene->setRotationY(20.0f);
     m_scene->setDistance(20.0f);
+
+    m_visual = new SpellVisual();
 
     m_displayEdit = new QLineEdit(this);
     m_displayEdit->setPlaceholderText("Display ID");
@@ -53,7 +56,7 @@ Window::Window() : m_selection(0), m_drag(0)
 
 void Window::addModel()
 {
-    Model *model = new Model;
+    Model *model = new Model(m_scene);
     model->setDisplayId(m_displayEdit->text().toUInt());
     m_scene->addModel(model);
 }
@@ -70,8 +73,8 @@ void Window::selectTarget()
 
 void Window::cast()
 {
-    m_visual.setVisual(m_visualEdit->text().toUInt());
-    m_visual.start();
+    m_visual->setVisual(m_visualEdit->text().toUInt());
+    m_visual->start();
 }
 
 void Window::mousePressed(QMouseEvent *event)
@@ -86,10 +89,10 @@ void Window::mouseReleased(QMouseEvent *event)
 
     if (event->button() == Qt::LeftButton) {
         if (m_selection & 0x1)
-            m_visual.setCaster(model);
+            m_visual->setCaster(model);
 
         if (m_selection & 0x2)
-            m_visual.setTarget(model);
+            m_visual->setTarget(model);
 
         m_selection = 0;
     } else if (event->button() == Qt::RightButton) {
@@ -113,7 +116,7 @@ void Window::mouseMoved(QMouseEvent *event)
                 m_drag->setY(y);
         } else {
             m_scene->setRotationX(m_scene->rotationX() + 360.0f * (event->x() - m_mouseX) / width());
-            m_scene->setRotationY(m_scene->rotationY() - 360.0f * (event->y() - m_mouseY) / height());
+            m_scene->setRotationY(m_scene->rotationY() + 360.0f * (event->y() - m_mouseY) / height());
         }
     }
 

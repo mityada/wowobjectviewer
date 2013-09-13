@@ -7,6 +7,7 @@
 #include "modelscene.h"
 #include "model.h"
 #include "particleemitter.h"
+#include "camerashake.h"
 
 ModelScene::ModelScene(QWidget *parent) : QGLWidget(parent),
     m_rotationX(0.0f),
@@ -90,6 +91,11 @@ void ModelScene::removeModel(Model *model)
     m_models.removeOne(model);
 }
 
+void ModelScene::addCameraShake(quint32 id)
+{
+    m_shakes << new CameraShake(id);
+}
+
 void ModelScene::initializeGL()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -123,8 +129,8 @@ void ModelScene::paintGL()
 
     MVP mvp;
     mvp.projection.perspective(32.25, float(width()) / float(height()), 1.0, 100.0);
-    mvp.view.lookAt(QVector3D(m_distance, 0.0, 0.0), QVector3D(0.0, 0.0, 0.0), QVector3D(0.0, 1.0, 0.0));
-    mvp.model.rotate(rotationY(), 0.0, 0.0, 1.0);
+    mvp.view.lookAt(QVector3D(0.0, 0.0, m_distance) + m_shake, QVector3D(0.0, 0.0, 0.0) + m_shake, QVector3D(0.0, 1.0, 0.0));
+    mvp.model.rotate(rotationY(), 1.0, 0.0, 0.0);
     mvp.model.rotate(rotationX(), 0.0, 1.0, 0.0);
     mvp.model.rotate(-90, 1.0, 0.0, 0.0);
 
@@ -200,6 +206,17 @@ void ModelScene::update()
 
     for (int i = 0; i < m_models.size(); i++)
         m_models[i]->update(timeDelta);
+
+    m_shake = QVector3D();
+
+    for (int i = 0; i < m_shakes.size();) {
+        if (m_shakes[i]->update(timeDelta)) {
+            m_shake += m_shakes[i++]->getShake();
+        } else {
+            delete m_shakes[i];
+            m_shakes.removeAt(i);
+        }
+    }
 
     updateGL();
 }
