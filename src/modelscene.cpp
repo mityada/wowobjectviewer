@@ -86,8 +86,12 @@ void ModelScene::paint()
 {
     int timeDelta = m_time.restart();
 
-    for (int i = 0; i < m_models.size(); i++)
+    QVector3D shake;
+
+    for (int i = 0; i < m_models.size(); i++) {
         m_models[i]->update(timeDelta);
+        shake += m_models[i]->getShake();
+    }
 
     if (!m_program) {
         m_program = new QOpenGLShaderProgram();
@@ -121,8 +125,8 @@ void ModelScene::paint()
 
     MVP mvp;
     mvp.projection.perspective(32.25, float(width()) / float(height()), 1.0, 100.0);
-    mvp.view.lookAt(QVector3D(m_distance, 0.0, 0.0), QVector3D(0.0, 0.0, 0.0), QVector3D(0.0, 1.0, 0.0));
-    mvp.model.rotate(rotationY(), 0.0, 0.0, 1.0);
+    mvp.view.lookAt(QVector3D(0.0, 0.0, m_distance) + shake, QVector3D(0.0, 0.0, 0.0) + shake, QVector3D(0.0, 1.0, 0.0));
+    mvp.model.rotate(rotationY(), 1.0, 0.0, 0.0);
     mvp.model.rotate(rotationX(), 0.0, 1.0, 0.0);
     mvp.model.rotate(-90, 1.0, 0.0, 0.0);
 

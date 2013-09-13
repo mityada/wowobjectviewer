@@ -26,7 +26,7 @@ ApplicationWindow {
             anchors.fill: parent
 
             rotationX: 45;
-            rotationY: -20;
+            rotationY: 20;
         }
 
         SpellVisual {
@@ -91,7 +91,7 @@ ApplicationWindow {
                 if (mouse.buttons & Qt.LeftButton) {
                     if (!selectedModel) {
                         scene.rotationX += 360 * (mouseX - lastX) / width;
-                        scene.rotationY -= 360 * (mouseY - lastY) / height;
+                        scene.rotationY += 360 * (mouseY - lastY) / height;
                     } else {
                         selectedModel.x += scene.worldX - lastWorldX;
                         selectedModel.y += scene.worldY - lastWorldY;

@@ -36,6 +36,13 @@ AnimationDataDBC::entry AnimationDataDBC::getEntry(quint32 id)
     return e;
 }
 
+CameraShakesDBC::entry CameraShakesDBC::getEntry(quint32 id)
+{
+    static DBC dbc("DBFilesClient/CameraShakes.dbc");
+
+    return dbc.getEntry<entry>(id);
+}
+
 CreatureDisplayInfoDBC::entry CreatureDisplayInfoDBC::getEntry(quint32 id)
 {
     static DBC dbc("DBFilesClient/CreatureDisplayInfo.dbc");
@@ -56,6 +63,13 @@ CreatureModelDataDBC::entry CreatureModelDataDBC::getEntry(quint32 id)
     e.model = dbc.getStringBlock() + quint32(e.model);
 
     return e;
+}
+
+SpellEffectCameraShakesDBC::entry SpellEffectCameraShakesDBC::getEntry(quint32 id)
+{
+    static DBC dbc("DBFilesClient/SpellEffectCameraShakes.dbc");
+
+    return dbc.getEntry<entry>(id);
 }
 
 SpellVisualDBC::entry SpellVisualDBC::getEntry(quint32 id)

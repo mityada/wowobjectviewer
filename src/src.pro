@@ -4,36 +4,40 @@ QT += quick
 
 DEFINES += WOV_LIBRARY
 
-HEADERS += m2structures.h\
-          m2.h\
-          model.h\
-          texture.h\
-          animatedvalue.h\
-          bone.h\
-          textureanimation.h\
-          particleemitter.h\
-          ribbonemitter.h\
-          mvp.h\
-          dbc.h\
-          spellvisualkit.h\
-          spellvisual.h\
-          modelscene.h\
-          mpq.h\
-          global.h
+HEADERS = \
+    animatedvalue.h \
+    bone.h \
+    camerashake.h \
+    dbc.h \
+    global.h \
+    m2.h \
+    m2structures.h \
+    model.h \
+    modelscene.h \
+    mpq.h \
+    mvp.h \
+    particleemitter.h \
+    ribbonemitter.h \
+    spellvisual.h \
+    spellvisualkit.h \
+    textureanimation.h \
+    texture.h
 
-SOURCES += m2.cpp\
-          model.cpp\
-          texture.cpp\
-          bone.cpp\
-          textureanimation.cpp\
-          particleemitter.cpp\
-          ribbonemitter.cpp\
-          mvp.cpp\
-          dbc.cpp\
-          spellvisualkit.cpp\
-          spellvisual.cpp\
-          modelscene.cpp\
-          mpq.cpp
+SOURCES = \
+    bone.cpp \
+    camerashake.cpp \
+    dbc.cpp \
+    m2.cpp \
+    model.cpp \
+    modelscene.cpp \
+    mpq.cpp \
+    mvp.cpp \
+    particleemitter.cpp \
+    ribbonemitter.cpp \
+    spellvisual.cpp \
+    spellvisualkit.cpp \
+    textureanimation.cpp \
+    texture.cpp
 
 unix:LIBS += -lstorm
 

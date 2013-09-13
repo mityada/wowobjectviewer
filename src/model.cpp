@@ -1,5 +1,7 @@
 #include "model.h"
 #include "m2.h"
+#include "spellvisualkit.h"
+#include "camerashake.h"
 #include "dbc.h"
 
 Model::Model()
@@ -14,15 +16,26 @@ void Model::addSpellVisualKit(quint32 id, bool oneshot)
     if (m_visualKits.contains(id))
         return;
 
-    m_visualKits.insert(id, SpellVisualKit(id, oneshot));
+    m_visualKits[id] = new SpellVisualKit(id, oneshot);
+    m_visualKits[id]->addCameraShakes(this);
 }
 
 void Model::removeSpellVisualKit(quint32 id)
 {
-    QHash<quint32, SpellVisualKit>::iterator it = m_visualKits.find(id);
+    QHash<quint32, SpellVisualKit *>::iterator it = m_visualKits.find(id);
 
     if (it != m_visualKits.end())
-        it.value().detach();
+        it.value()->detach();
+}
+
+void Model::addCameraShake(quint32 id)
+{
+    m_shakes << new CameraShake(id);
+};
+
+QVector3D Model::getShake() const
+{
+    return m_shake;
 }
 
 void Model::setDisplayId(quint32 displayId)
@@ -73,6 +86,17 @@ void Model::update(int timeDelta)
     if (m_model)
         m_model->update(timeDelta);
 
+    m_shake = QVector3D();
+
+    for (int i = 0; i < m_shakes.size();) {
+        if (m_shakes[i]->update(timeDelta)) {
+            m_shake += m_shakes[i++]->getShake();
+        } else {
+            delete m_shakes[i];
+            m_shakes.removeAt(i);
+        }
+    }
+
     updateVisualKits();
 }
 
@@ -96,9 +120,9 @@ void Model::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
 
 void Model::updateVisualKits()
 {
-    QHash<quint32, SpellVisualKit>::iterator it = m_visualKits.begin();
+    QHash<quint32, SpellVisualKit *>::iterator it = m_visualKits.begin();
     while (it != m_visualKits.end()) {
-        if (!it.value().update(m_model))
+        if (!it.value()->update(m_model))
             it = m_visualKits.erase(it);
         else
             it++;

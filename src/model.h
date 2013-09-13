@@ -5,11 +5,13 @@
 
 #include "global.h"
 #include "mvp.h"
-#include "spellvisualkit.h"
 
 class QOpenGLShaderProgram;
 
 class M2;
+class ModelScene;
+class SpellVisualKit;
+class CameraShake;
 
 class WOV_EXPORT Model : public QObject
 {
@@ -24,6 +26,9 @@ public:
 
     Q_INVOKABLE void addSpellVisualKit(quint32 id, bool oneshot = false);
     Q_INVOKABLE void removeSpellVisualKit(quint32 id);
+
+    void addCameraShake(quint32 id);
+    QVector3D getShake() const;
 
     void setDisplayId(quint32 displayId);
 
@@ -42,7 +47,10 @@ private:
     QString m_modelFileName;
     QHash<quint32, QString> m_textureFileNames;
 
-    QHash<quint32, SpellVisualKit> m_visualKits;
+    QHash<quint32, SpellVisualKit *> m_visualKits;
+
+    QList<CameraShake *> m_shakes;
+    QVector3D m_shake;
 };
 
 #endif

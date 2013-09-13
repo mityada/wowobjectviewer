@@ -61,6 +61,23 @@ namespace AnimationDataDBC
     entry getEntry(quint32 id);
 }
 
+namespace CameraShakesDBC
+{
+    struct entry
+    {
+        quint32 id;
+        quint32 type;
+        quint32 axis;
+        float amplitude;
+        float frequency;
+        float duration;
+        float phase;
+        float coefficient;
+    };
+
+    entry getEntry(quint32 id);
+}
+
 namespace CreatureDisplayInfoDBC
 {
     struct entry
@@ -89,6 +106,17 @@ namespace CreatureModelDataDBC
         quint32 id;
         quint32 flags;
         const char *model;
+    };
+
+    entry getEntry(quint32 id);
+}
+
+namespace SpellEffectCameraShakesDBC
+{
+    struct entry
+    {
+        quint32 id;
+        quint32 shakes[3];
     };
 
     entry getEntry(quint32 id);
@@ -128,6 +156,8 @@ namespace SpellVisualKitDBC
         qint32 unknown1;
         qint32 unknown2;
         qint32 base2;
+        quint32 sound;
+        quint32 shakes;
     };
 
     entry getEntry(quint32 id);

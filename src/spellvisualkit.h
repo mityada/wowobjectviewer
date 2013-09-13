@@ -6,6 +6,7 @@
 #include "dbc.h"
 
 class M2;
+class Model;
 
 class SpellVisualKit
 {
@@ -14,6 +15,8 @@ public:
 
     void attach(M2 *model);
     void detach();
+
+    void addCameraShakes(Model *scene);
 
     bool update(M2 *model);
 

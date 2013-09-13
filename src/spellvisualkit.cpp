@@ -2,6 +2,8 @@
 
 #include "spellvisualkit.h"
 #include "m2.h"
+#include "model.h"
+#include "dbc.h"
 
 SpellVisualKit::SpellVisualKit(quint32 id, bool oneshot)
     : m_kit(SpellVisualKitDBC::getEntry(id)),
@@ -40,6 +42,19 @@ void SpellVisualKit::detach()
     }
 
     m_model->setAnimation(0);
+}
+
+void SpellVisualKit::addCameraShakes(Model *model)
+{
+    if (!model || !m_kit.shakes)
+        return;
+
+    SpellEffectCameraShakesDBC::entry shakes = SpellEffectCameraShakesDBC::getEntry(m_kit.shakes);
+
+    for (int i = 0; i < 3; i++) {
+        if (shakes.shakes[i])
+            model->addCameraShake(shakes.shakes[i]);
+    }
 }
 
 bool SpellVisualKit::update(M2 *model)
