@@ -54,8 +54,8 @@ class ParticleEmitter
 public:
     ParticleEmitter(const M2ParticleEmitter &emitter, const quint32 *sequences, const QByteArray &data);
 
-    void update(quint32 animation, quint32 time, float timeDelta, QMatrix4x4 boneMatrix = QMatrix4x4());
-    void render(QOpenGLShaderProgram *program, MVP mvp);
+    void update(quint32 animation, quint32 time, float timeDelta, QMatrix4x4 boneMatrix);
+    void render(QOpenGLShaderProgram *program, MVP viewProjection);
 
     qint16 getBoneId();
     qint16 getTextureId();

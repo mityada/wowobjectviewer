@@ -21,7 +21,7 @@ public:
     RibbonEmitter(const M2RibbonEmitter &emitter, const quint32 *sequences, const QByteArray &data);
 
     void update(quint32 animation, quint32 time, QMatrix4x4 boneMatrix);
-    void render(QOpenGLShaderProgram *program, MVP mvp);
+    void render(QOpenGLShaderProgram *program, MVP viewProjection);
 
     qint32 getBoneId() const;
     qint32 getTextureId() const;

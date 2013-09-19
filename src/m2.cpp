@@ -309,7 +309,7 @@ void M2::render(QOpenGLShaderProgram *program, MVP mvp)
     renderAttachments(program, mvp);
 }
 
-void M2::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
+void M2::renderParticles(QOpenGLShaderProgram *program, MVP viewProjection)
 {
     for (int i = 0; i < m_ribbonEmitters.size(); i++) {
         qint32 texture = m_ribbonEmitters[i].getTextureId();
@@ -317,7 +317,7 @@ void M2::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
         if (texture != -1)
             m_textures[texture].bind();
 
-        m_ribbonEmitters[i].render(program, mvp);
+        m_ribbonEmitters[i].render(program, viewProjection);
     }
 
     for (int i = 0; i < m_particleEmitters.size(); i++) {
@@ -326,10 +326,10 @@ void M2::renderParticles(QOpenGLShaderProgram *program, MVP mvp)
         if (texture != -1)
             m_textures[texture].bind();
 
-        m_particleEmitters[i].render(program, mvp);
+        m_particleEmitters[i].render(program, viewProjection);
     }
 
-    renderAttachmentsParticles(program, mvp);
+    renderAttachmentsParticles(program, viewProjection);
 }
 
 void M2::renderAttachments(QOpenGLShaderProgram *program, MVP mvp)
@@ -352,27 +352,17 @@ void M2::renderAttachments(QOpenGLShaderProgram *program, MVP mvp)
     }
 }
 
-void M2::renderAttachmentsParticles(QOpenGLShaderProgram *program, MVP mvp)
+void M2::renderAttachmentsParticles(QOpenGLShaderProgram *program, MVP viewProjection)
 {
     QMultiHash<quint32, M2 *>::iterator it = m_attachedModels.begin();
 
     while (it != m_attachedModels.end()) {
-        float *position = m_attachments[it.key()]->position;
-        qint32 bone = m_attachments[it.key()]->bone;
-
-        MVP attachmentMVP = mvp;
-
-        if (bone >= 0 && bone < m_bones.size())
-            attachmentMVP.model *= m_bones[bone].getMatrix(m_animation, m_time, mvp);
-
-        attachmentMVP.model.translate(position[0], position[1], position[2]);
-
-        it.value()->renderParticles(program, attachmentMVP);
+        it.value()->renderParticles(program, viewProjection);
         it++;
     }
 }
 
-void M2::update(int timeDelta)
+void M2::update(int timeDelta, QMatrix4x4 model)
 {
     if (!m_initialized)
         return;
@@ -392,13 +382,13 @@ void M2::update(int timeDelta)
             }
         }
 
-        updateEmitters(timeDelta);
+        updateEmitters(timeDelta, model);
     }
 
-    updateAttachments(timeDelta);
+    updateAttachments(timeDelta, model);
 }
 
-void M2::updateEmitters(int timeDelta)
+void M2::updateEmitters(int timeDelta, QMatrix4x4 model)
 {
     for (int i = 0; i < m_ribbonEmitters.size(); i++) {
         qint32 bone = m_ribbonEmitters[i].getBoneId();
@@ -406,7 +396,7 @@ void M2::updateEmitters(int timeDelta)
         if (bone != -1)
             boneMatrix = m_bones[bone].getMatrix(m_animation, m_time, MVP());
 
-        m_ribbonEmitters[i].update(m_animation, m_time, boneMatrix);
+        m_ribbonEmitters[i].update(m_animation, m_time, model * boneMatrix);
     }
 
     for (int i = 0; i < m_particleEmitters.size(); i++) {
@@ -415,17 +405,27 @@ void M2::updateEmitters(int timeDelta)
         if (bone != -1)
             boneMatrix = m_bones[bone].getMatrix(m_animation, m_time, MVP());
 
-        m_particleEmitters[i].update(m_animation, m_time, timeDelta / 1000.0f, boneMatrix);
+        m_particleEmitters[i].update(m_animation, m_time, timeDelta / 1000.0f, model * boneMatrix);
     }
 }
 
-void M2::updateAttachments(int timeDelta)
+void M2::updateAttachments(int timeDelta, QMatrix4x4 model)
 {
     QMultiHash<quint32, M2 *>::iterator it = m_attachedModels.begin();
 
     while (it != m_attachedModels.end()) {
+        QMatrix4x4 matrix = model;
+
+        float *position = m_attachments[it.key()]->position;
+        qint32 bone = m_attachments[it.key()]->bone;
+
+        if (bone >= 0 && bone < m_bones.size())
+            matrix *= m_bones[bone].getMatrix(m_animation, m_time, MVP());
+
+        matrix.translate(position[0], position[1], position[2]);
+
         it.value()->setAnimating(animating());
-        it.value()->update(timeDelta);
+        it.value()->update(timeDelta, matrix);
         it++;
     }
 }

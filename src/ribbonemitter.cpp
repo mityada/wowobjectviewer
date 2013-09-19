@@ -73,7 +73,7 @@ void RibbonEmitter::initialize()
     m_initialized = true;
 }
 
-void RibbonEmitter::render(QOpenGLShaderProgram *program, MVP mvp)
+void RibbonEmitter::render(QOpenGLShaderProgram *program, MVP viewProjection)
 {
     if (!m_initialized)
         initialize();
@@ -81,7 +81,7 @@ void RibbonEmitter::render(QOpenGLShaderProgram *program, MVP mvp)
     if (!m_vertices)
         return;
 
-    program->setUniformValue("mvpMatrix", mvp.getMVPMatrix());
+    program->setUniformValue("mvpMatrix", viewProjection.getMVPMatrix());
 
     m_vertexBuffer->bind();
     m_vertexBuffer->allocate(m_vertices, 2 * m_ribbons.size() * sizeof(ParticleVertex));

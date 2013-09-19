@@ -26,8 +26,8 @@ public:
 
     void initialize();
     void render(QOpenGLShaderProgram *program, MVP mvp);
-    void renderParticles(QOpenGLShaderProgram *program, MVP mvp);
-    void update(int timeDelta);
+    void renderParticles(QOpenGLShaderProgram *program, MVP viewProjection);
+    void update(int timeDelta, QMatrix4x4 model);
 
     void setAnimation(qint32 animation, bool forceOneshot = false);
     qint32 animation() const;
@@ -52,11 +52,11 @@ private:
 
     void switchAnimation();
 
-    void updateEmitters(int timeDelta);
-    void updateAttachments(int timeDelta);
+    void updateEmitters(int timeDelta, QMatrix4x4 model);
+    void updateAttachments(int timeDelta, QMatrix4x4 model);
 
     void renderAttachments(QOpenGLShaderProgram *program, MVP mvp);
-    void renderAttachmentsParticles(QOpenGLShaderProgram *program, MVP mvp);
+    void renderAttachmentsParticles(QOpenGLShaderProgram *program, MVP viewProjection);
 
     QByteArray m_data;
 
