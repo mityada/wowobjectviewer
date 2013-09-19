@@ -107,8 +107,13 @@ void Model::update(int timeDelta)
         m_modelChanged = false;
     }
 
-    if (m_model)
-        m_model->update(timeDelta);
+    if (m_model) {
+        QMatrix4x4 matrix;
+        matrix.translate(m_x, m_y, 0.0f);
+        matrix.rotate(m_orientation, 0.0f, 0.0f, 1.0f);
+
+        m_model->update(timeDelta, matrix);
+    }
 
     updateVisualKits();
 }
@@ -124,9 +129,6 @@ void Model::render(QGLShaderProgram *program, MVP mvp)
 
 void Model::renderParticles(QGLShaderProgram *program, MVP mvp)
 {
-    mvp.model.translate(m_x, m_y, 0.0f);
-    mvp.model.rotate(m_orientation, 0.0f, 0.0f, 1.0f);
-
     if (m_model)
         m_model->renderParticles(program, mvp);
 }

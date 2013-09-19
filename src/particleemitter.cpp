@@ -174,14 +174,14 @@ void ParticleEmitter::initialize()
     m_initialized = true;
 }
 
-void ParticleEmitter::render(QGLShaderProgram *program, MVP mvp)
+void ParticleEmitter::render(QGLShaderProgram *program, MVP viewProjection)
 {
     if (!m_initialized)
         initialize();
 
-    program->setUniformValue("mvpMatrix", mvp.getMVPMatrix());
+    program->setUniformValue("mvpMatrix", viewProjection.getMVPMatrix());
 
-    QMatrix4x4 billboard = mvp.getBillboardMatrix();
+    QMatrix4x4 billboard = viewProjection.getBillboardMatrix();
 
     ParticleVertex *vertices = new ParticleVertex[4 * m_particles.size()];
     quint16 *indices = new quint16[6 * m_particles.size()];
