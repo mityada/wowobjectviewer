@@ -301,6 +301,8 @@ void M2::render(QOpenGLShaderProgram *program, MVP mvp)
         glDrawElements(GL_TRIANGLES, m_submeshes[submesh].trianglesCount, GL_UNSIGNED_SHORT, (const GLvoid *)(m_submeshes[submesh].startingTriangle * sizeof(GLushort)));
     }
 
+    glDepthMask(GL_TRUE);
+
     glAlphaFunc(GL_ALWAYS, 0.0f);
     glBlendFunc(GL_ONE, GL_ZERO);
 
