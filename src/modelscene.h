@@ -11,6 +11,7 @@ class QOpenGLShaderProgram;
 class QOpenGLBuffer;
 
 class Model;
+class SpellVisual;
 
 class WOV_EXPORT ModelScene : public QQuickItem
 {
@@ -40,6 +41,9 @@ public:
     Q_INVOKABLE void addModel(Model *model);
     Q_INVOKABLE void removeModel(Model *model);
 
+    void addVisual(SpellVisual *visual);
+    void removeVisual(SpellVisual *visual);
+
 public slots:
     void paint();
     void update();
@@ -57,6 +61,8 @@ private:
     float m_rotationX;
     float m_rotationY;
     float m_distance;
+
+    QList<SpellVisual *> m_visuals;
 
     int m_mouseX, m_mouseY;
     int m_selection;

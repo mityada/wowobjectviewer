@@ -26,6 +26,11 @@ const char * DBC::getStringBlock() const
     return m_strings;
 }
 
+quint32 DBC::getRecordCount() const
+{
+    return m_header->recordCount;
+}
+
 AnimationDataDBC::entry AnimationDataDBC::getEntry(quint32 id)
 {
     static DBC dbc("DBFilesClient/AnimationData.dbc");
@@ -48,6 +53,21 @@ CreatureDisplayInfoDBC::entry CreatureDisplayInfoDBC::getEntry(quint32 id)
     static DBC dbc("DBFilesClient/CreatureDisplayInfo.dbc");
 
     entry e = dbc.getEntry<entry>(id);
+    e.skin1 = dbc.getStringBlock() + quint32(e.skin1);
+    e.skin2 = dbc.getStringBlock() + quint32(e.skin2);
+    e.skin3 = dbc.getStringBlock() + quint32(e.skin3);
+
+    return e;
+}
+
+CreatureDisplayInfoDBC::entry CreatureDisplayInfoDBC::getRecord(quint32 record)
+{
+    static DBC dbc("DBFilesClient/CreatureDisplayInfo.dbc");
+
+    if (record >= dbc.getRecordCount())
+        return entry();
+
+    entry e = dbc.getRecord<entry>(record);
     e.skin1 = dbc.getStringBlock() + quint32(e.skin1);
     e.skin2 = dbc.getStringBlock() + quint32(e.skin2);
     e.skin3 = dbc.getStringBlock() + quint32(e.skin3);

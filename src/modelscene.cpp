@@ -7,13 +7,15 @@
 #include "modelscene.h"
 #include "model.h"
 #include "particleemitter.h"
+#include "spellvisual.h"
 
 ModelScene::ModelScene()
     : m_rotationX(0.0f),
       m_rotationY(0.0f),
       m_distance(20.0f),
       m_program(0),
-      m_particleProgram(0)
+      m_particleProgram(0),
+      m_gridBuffer(0)
 {
     connect(this, SIGNAL(windowChanged(QQuickWindow *)), this, SLOT(handleWindowChanged(QQuickWindow *)));
 }
@@ -69,6 +71,19 @@ void ModelScene::removeModel(Model *model)
     m_models.removeOne(model);
 }
 
+void ModelScene::addVisual(SpellVisual *visual)
+{
+    if (!visual)
+        return;
+
+    m_visuals << visual;
+}
+
+void ModelScene::removeVisual(SpellVisual *visual)
+{
+    m_visuals.removeOne(visual);
+}
+
 void ModelScene::handleWindowChanged(QQuickWindow *win)
 {
     if (win) {
@@ -92,6 +107,9 @@ void ModelScene::paint()
         m_models[i]->update(timeDelta);
         shake += m_models[i]->getShake();
     }
+
+    for (int i = 0; i < m_visuals.size(); i++)
+        m_visuals[i]->update(timeDelta);
 
     if (!m_program) {
         m_program = new QOpenGLShaderProgram();

@@ -31,6 +31,8 @@ ApplicationWindow {
 
         SpellVisual {
             id: visual
+
+            scene: scene
         }
 
         MouseArea {

@@ -35,15 +35,16 @@ public:
         return T();
     }
 
-    const char * getStringBlock() const;
-
-private:
     template <typename T>
     T getRecord(quint32 id) const
     {
         return *reinterpret_cast<const T *>(m_records + m_header->recordSize * id);
     }
 
+    const char * getStringBlock() const;
+    quint32 getRecordCount() const;
+
+private:
     QByteArray m_data;
     const DBCHeader *m_header;
     const char *m_records;
@@ -97,6 +98,7 @@ namespace CreatureDisplayInfoDBC
     };
 
     entry getEntry(quint32 id);
+    entry getRecord(quint32 record);
 }
 
 namespace CreatureModelDataDBC
@@ -120,6 +122,23 @@ namespace SpellEffectCameraShakesDBC
     };
 
     entry getEntry(quint32 id);
+}
+
+namespace SpellDBC
+{
+    struct entry
+    {
+        quint32 id;
+        quint32 resistances;
+        quint32 category;
+        quint32 unknown1;
+        quint32 dispelType;
+        quint32 mechanic;
+        quint32 attributes;
+        quint32 attributesEx;
+        quint32 targets;
+        quint32 unknown2[5];;
+    };
 }
 
 namespace SpellVisualDBC

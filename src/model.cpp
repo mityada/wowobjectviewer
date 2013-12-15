@@ -38,6 +38,11 @@ QVector3D Model::getShake() const
     return m_shake;
 }
 
+quint32 Model::displayId() const
+{
+    return m_displayId;
+}
+
 void Model::setDisplayId(quint32 displayId)
 {
     m_displayId = displayId;
@@ -59,6 +64,47 @@ void Model::setDisplayId(quint32 displayId)
     m_textureFileNames[13] = modelPath + "/" + QString(displayInfo.skin3) + ".blp";
 
     m_modelChanged = true;
+}
+
+const QString & Model::fileName() const
+{
+    return m_modelFileName;
+}
+
+void Model::setFileName(const QString &fileName)
+{
+    m_modelFileName = fileName;
+    m_modelChanged = true;
+}
+
+float Model::x() const
+{
+    return m_x;
+}
+
+float Model::y() const
+{
+    return m_y;
+}
+
+float Model::orientation() const
+{
+    return m_orientation;
+}
+
+void Model::setX(float x)
+{
+    m_x = x;
+}
+
+void Model::setY(float y)
+{
+    m_y = y;
+}
+
+void Model::setOrientation(float orientation)
+{
+    m_orientation = orientation;
 }
 
 void Model::update(int timeDelta)

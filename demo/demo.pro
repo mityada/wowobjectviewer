@@ -3,7 +3,6 @@ TARGET = demo
 QT += quick
 
 SOURCES += main.cpp
-RESOURCES += demo.qrc
 
 win32:INCLUDEPATH += ../StormLib
 win32:LIBS += -L$$PWD/../StormLib/ -lStormLib_dll
