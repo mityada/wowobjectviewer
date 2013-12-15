@@ -11,7 +11,7 @@ Window::Window() : m_selection(0), m_drag(0), m_visual(0)
     m_scene->setRotationY(20.0f);
     m_scene->setDistance(20.0f);
 
-    m_visual = new SpellVisual();
+    m_visual = new SpellVisual(m_scene);
 
     m_displayEdit = new QLineEdit(this);
     m_displayEdit->setPlaceholderText("Display ID");

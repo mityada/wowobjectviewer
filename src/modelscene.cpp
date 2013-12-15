@@ -7,6 +7,7 @@
 #include "modelscene.h"
 #include "model.h"
 #include "particleemitter.h"
+#include "spellvisual.h"
 #include "camerashake.h"
 
 ModelScene::ModelScene(QWidget *parent) : QGLWidget(parent),
@@ -89,6 +90,19 @@ void ModelScene::addModel(Model *model)
 void ModelScene::removeModel(Model *model)
 {
     m_models.removeOne(model);
+}
+
+void ModelScene::addVisual(SpellVisual *visual)
+{
+    if (!visual)
+        return;
+
+    m_visuals << visual;
+}
+
+void ModelScene::removeVisual(SpellVisual *visual)
+{
+    m_visuals.removeOne(visual);
 }
 
 void ModelScene::addCameraShake(quint32 id)
@@ -206,6 +220,9 @@ void ModelScene::update()
 
     for (int i = 0; i < m_models.size(); i++)
         m_models[i]->update(timeDelta);
+
+    for (int i = 0; i < m_visuals.size(); i++)
+        m_visuals[i]->update(timeDelta);
 
     m_shake = QVector3D();
 

@@ -55,6 +55,17 @@ void Model::setDisplayId(quint32 displayId)
     m_modelChanged = true;
 }
 
+const QString & Model::fileName() const
+{
+    return m_modelFileName;
+}
+
+void Model::setFileName(const QString &fileName)
+{
+    m_modelFileName = fileName;
+    m_modelChanged = true;
+}
+
 float Model::x() const
 {
     return m_x;

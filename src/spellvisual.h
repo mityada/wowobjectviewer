@@ -7,6 +7,8 @@
 #include "dbc.h"
 #include "model.h"
 
+class ModelScene;
+
 class WOV_EXPORT SpellVisual : public QObject
 {
     Q_OBJECT
@@ -18,7 +20,7 @@ class WOV_EXPORT SpellVisual : public QObject
     Q_PROPERTY(Model * target READ target WRITE setTarget)
 
 public:
-    SpellVisual();
+    SpellVisual(ModelScene *scene);
 
     quint32 visual() const;
     quint32 castingTime() const;
@@ -34,12 +36,18 @@ public:
     void setCaster(Model *caster);
     void setTarget(Model *target);
 
+    void update(int timeDelta);
+
+    void impact();
+
 public slots:
     void start();
     void cast();
     void cancel();
 
 private:
+    ModelScene *m_scene;
+
     SpellVisualDBC::entry m_visual;
 
     quint32 m_castingTime;
@@ -48,6 +56,7 @@ private:
 
     Model *m_caster;
     Model *m_target;
+    Model *m_missile;
 };
 
 #endif

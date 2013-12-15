@@ -1,14 +1,20 @@
 #include <QTimer>
+#include <QRegExp>
+#include <QVector2D>
+#include <QtCore/qmath.h>
 
 #include "spellvisual.h"
+#include "modelscene.h"
 
-SpellVisual::SpellVisual() : m_caster(0), m_target(0)
+SpellVisual::SpellVisual(ModelScene *scene) : m_scene(scene), m_caster(0), m_target(0), m_missile(0)
 {
     m_visual.id = 0;
 
     m_castingTime = 2000;
     m_duration = 5000;
     m_channeled = false;
+
+    scene->addVisual(this);
 }
 
 quint32 SpellVisual::visual() const
@@ -74,6 +80,48 @@ void SpellVisual::setTarget(Model *target)
     m_target = target;
 }
 
+void SpellVisual::update(int timeDelta)
+{
+    if (!m_missile || !m_target)
+        return;
+
+    QVector2D speed;
+    speed.setX(m_target->x() - m_missile->x());
+    speed.setY(m_target->y() - m_missile->y());
+
+    if (speed.length() < 0.1f) {
+        impact();
+
+        m_scene->removeModel(m_missile);
+        delete m_missile;
+        m_missile = 0;
+
+        return;
+    }
+
+    speed.normalize();
+    speed *= 20.0f;
+
+    float time = timeDelta / 1000.0f;
+
+    m_missile->setX(m_missile->x() + speed.x() * time);
+    m_missile->setY(m_missile->y() + speed.y() * time);
+    m_missile->setOrientation(180 * qAtan2(speed.y(), speed.x()) / M_PI);
+}
+
+void SpellVisual::impact()
+{
+    if (target()) {
+        target()->addSpellVisualKit(m_visual.impact, true);
+
+        if (duration())
+            target()->addSpellVisualKit(m_visual.state);
+    }
+
+    if (duration())
+        QTimer::singleShot(duration(), this, SLOT(cancel()));
+}
+
 void SpellVisual::start()
 {
     if (!visual())
@@ -96,17 +144,24 @@ void SpellVisual::cast()
 
         if (duration() && channeled())
             caster()->addSpellVisualKit(m_visual.channel);
+
+        if (target()) {
+            if (m_visual.hasMissile) {
+                SpellVisualEffectNameDBC::entry missile = SpellVisualEffectNameDBC::getEntry(m_visual.missile);
+                QString missileFile(QString(missile.model).replace(QRegExp(".md[x]", Qt::CaseInsensitive), ".m2"));
+
+                m_missile = new Model(m_scene);
+                m_missile->setFileName(missileFile);
+                m_missile->setX(caster()->x());
+                m_missile->setY(caster()->y());
+                m_missile->setOrientation(caster()->orientation());
+
+                m_scene->addModel(m_missile);
+            } else {
+                impact();
+            }
+        }
     }
-
-    if (target()) {
-        target()->addSpellVisualKit(m_visual.impact, true);
-
-        if (duration())
-            target()->addSpellVisualKit(m_visual.state);
-    }
-
-    if (duration())
-        QTimer::singleShot(duration(), this, SLOT(cancel()));
 }
 
 void SpellVisual::cancel()

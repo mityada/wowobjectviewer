@@ -2,10 +2,12 @@ TEMPLATE = app
 TARGET = demo
 QT += opengl
 
-HEADERS = window.h
+HEADERS = \
+    window.h
 
-SOURCES = window.cpp\
-          main.cpp
+SOURCES = \
+    window.cpp \
+    main.cpp
 
 win32:INCLUDEPATH += ../StormLib
 win32:LIBS += -L$$PWD/../StormLib/ -lStormLib_dll

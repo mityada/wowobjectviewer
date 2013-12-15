@@ -11,6 +11,7 @@ class QGLShaderProgram;
 class QGLBuffer;
 
 class Model;
+class SpellVisual;
 class CameraShake;
 
 class WOV_EXPORT ModelScene : public QGLWidget
@@ -44,6 +45,9 @@ public:
     Q_INVOKABLE void addModel(Model *model);
     Q_INVOKABLE void removeModel(Model *model);
 
+    void addVisual(SpellVisual *visual);
+    void removeVisual(SpellVisual *visual);
+
     void addCameraShake(quint32 id);
 
 signals:
@@ -75,6 +79,8 @@ private:
     float m_rotationX;
     float m_rotationY;
     float m_distance;
+
+    QList<SpellVisual *> m_visuals;
 
     QList<CameraShake *> m_shakes;
     QVector3D m_shake;
