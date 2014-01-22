@@ -79,6 +79,68 @@ namespace CameraShakesDBC
     entry getEntry(quint32 id);
 }
 
+namespace CharacterFacialHairStylesDBC
+{
+    struct entry
+    {
+        quint32 race;
+        quint32 gender;
+        quint32 type;
+        quint32 unknown[3];
+        quint32 geoset[3];
+    };
+
+    entry getEntry(quint32 race, quint32 gender, quint32 type);
+}
+
+namespace CharHairGeosetsDBC
+{
+    struct entry
+    {
+        quint32 id;
+        quint32 race;
+        quint32 gender;
+        quint32 hairType;
+        quint32 geoset;
+        quint32 bald;
+    };
+
+    entry getHairGeoset(quint32 race, quint32 gender, quint32 hairType);
+}
+
+namespace CharSectionsDBC
+{
+    struct entry
+    {
+        quint32 id;
+        quint32 race;
+        quint32 gender;
+        quint32 sectionType;
+        quint32 type;
+        quint32 color;
+        const char *texture1;
+        const char *texture2;
+        const char *texture3;
+    };
+
+    entry getSection(quint32 race, quint32 gender, quint32 sectionType, quint32 type, quint32 color);
+}
+
+namespace ChrRacesDBC
+{
+    struct entry
+    {
+        quint32 id;
+        quint32 flags;
+        quint32 faction;
+        quint32 explorationSound;
+        quint32 maleDisplayId;
+        quint32 femaleDisplayId;
+    };
+
+    entry getEntry(quint32 id);
+}
+
 namespace CreatureDisplayInfoDBC
 {
     struct entry
@@ -99,6 +161,25 @@ namespace CreatureDisplayInfoDBC
 
     entry getEntry(quint32 id);
     entry getRecord(quint32 record);
+}
+
+namespace CreatureDisplayInfoExtraDBC
+{
+    struct entry
+    {
+        quint32 id;
+        quint32 race;
+        quint32 gender;
+        quint32 skinColor;
+        quint32 faceType;
+        quint32 hairType;
+        quint32 hairStyle;
+        quint32 beardStyle;
+        quint32 equipment[10];
+        const char *texture;
+    };
+
+    entry getEntry(quint32 id);
 }
 
 namespace CreatureModelDataDBC

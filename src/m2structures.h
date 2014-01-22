@@ -214,6 +214,18 @@ struct M2Color
     M2AnimationBlock opacity;
 };
 
+enum TextureType
+{
+    TEXTURE_CUSTOM = 0,
+    TEXTURE_BODY   = 1,
+    TEXTURE_CAPE   = 2,
+    TEXTURE_HAIR   = 6,
+    TEXTURE_FUR    = 8,
+    TEXTURE_SKIN1  = 11,
+    TEXTURE_SKIN2  = 12,
+    TEXTURE_SKIN3  = 13
+};
+
 struct M2Texture
 {
     quint32 type;

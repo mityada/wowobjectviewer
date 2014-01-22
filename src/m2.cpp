@@ -44,6 +44,7 @@ M2::M2(const QString &fileName)
         m_indices[i] = indices[triangles[i]];
 
     m_submeshes = reinterpret_cast<M2Submesh *>(m_data.data() + m_views[0].submeshOffset);
+
     m_textureUnits = reinterpret_cast<M2TextureUnit *>(m_data.data() + m_views[0].textureUnitsOffset);
 
     m_renderFlags = reinterpret_cast<M2RenderFlags *>(m_data.data() + m_header->renderFlagsOffset);
@@ -121,6 +122,9 @@ M2::M2(const QString &fileName)
 
     for (quint32 i = 0; i < m_header->particleEmittersCount; i++)
         m_particleEmitters << ParticleEmitter(particleEmitters[i], m_sequences, m_data);
+
+    for (quint8 i = 0; i < GEOSET_COUNT; i++)
+        m_geosets[i] = 1;
 
     m_loaded = true;
 }
@@ -213,6 +217,12 @@ void M2::render(QOpenGLShaderProgram *program, MVP mvp)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     for (quint32 i = 0; i < m_views[0].textureUnitsCount; i++) {
+        quint32 submesh = m_textureUnits[i].submeshIndex;
+
+        quint32 part = m_submeshes[submesh].part;
+        if (part != 0 && m_geosets[part / 100] != part % 100)
+            continue;
+
         M2RenderFlags flags = m_renderFlags[m_textureUnits[i].renderFlagIndex];
 
         switch (flags.blending) {
@@ -295,8 +305,6 @@ void M2::render(QOpenGLShaderProgram *program, MVP mvp)
         program->setUniformValue("material.emission", emission);
 
         program->setUniformValue("lighting", lighting);
-
-        quint32 submesh = m_textureUnits[i].submeshIndex;
 
         glDrawElements(GL_TRIANGLES, m_submeshes[submesh].trianglesCount, GL_UNSIGNED_SHORT, (const GLvoid *)(m_submeshes[submesh].startingTriangle * sizeof(GLushort)));
     }
@@ -500,6 +508,17 @@ void M2::setTexture(quint32 type, QString fileName)
         return;
 
     m_textures[m_replaceableTextures[type]].load(fileName);
+}
+
+void M2::setGeoset(quint8 type, quint8 value)
+{
+    if (type >= GEOSET_COUNT)
+        return;
+
+    if (value == 0 && value >= 100)
+        return;
+
+    m_geosets[type] = value;
 }
 
 bool M2::attachModel(quint32 attachmentId, M2 *model)

@@ -15,6 +15,28 @@
 #include "particleemitter.h"
 #include "mvp.h"
 
+enum GeosetType
+{
+    GEOSET_HAIR    = 0,
+    GEOSET_FACE1   = 1,
+    GEOSET_FACE2   = 2,
+    GEOSET_FACE3   = 3,
+    GEOSET_WRISTS  = 4,
+    GEOSET_FEET    = 5,
+    GEOSET_UNK1    = 6,
+    GEOSET_EARS    = 7,
+    GEOSET_SLEEVES = 8,
+    GEOSET_FEET2   = 9,
+    GEOSET_SHIRT   = 10,
+    GEOSET_UNK2    = 11,
+    GEOSET_TABARD  = 12,
+    GEOSET_LEGS    = 13,
+    GEOSET_UNK3    = 14,
+    GEOSET_BACK    = 15
+};
+
+#define GEOSET_COUNT 16
+
 class M2 : public QObject
 {
     Q_OBJECT
@@ -36,6 +58,8 @@ public:
     bool animating() const;
 
     void setTexture(quint32 type, QString fileName);
+
+    void setGeoset(quint8 type, quint8 value);
 
     bool attachModel(quint32 attachmentId, M2 *model);
     bool detachModel(quint32 attachmentId, M2 *model);
@@ -105,6 +129,8 @@ private:
     quint32 m_time;
     qint32 m_animationState;
     qint32 m_animationOneshot;
+
+    quint8 m_geosets[GEOSET_COUNT];
 
     QOpenGLBuffer *m_vertexBuffer;
     QOpenGLBuffer *m_indexBuffer;

@@ -8,6 +8,8 @@ HEADERS = \
     animatedvalue.h \
     bone.h \
     camerashake.h \
+    character.h \
+    creature.h \
     dbc.h \
     global.h \
     m2.h \
@@ -26,6 +28,8 @@ HEADERS = \
 SOURCES = \
     bone.cpp \
     camerashake.cpp \
+    character.cpp \
+    creature.cpp \
     dbc.cpp \
     m2.cpp \
     model.cpp \

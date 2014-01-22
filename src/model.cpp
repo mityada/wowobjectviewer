@@ -2,12 +2,10 @@
 #include "m2.h"
 #include "spellvisualkit.h"
 #include "camerashake.h"
-#include "dbc.h"
 
 Model::Model()
-    : m_displayId(0),
-      m_x(0.0f), m_y(0.0f), m_orientation(0.0f),
-      m_model(0), m_modelChanged(false)
+    : m_model(0),
+      m_x(0.0f), m_y(0.0f), m_orientation(0.0f)
 {
 }
 
@@ -38,43 +36,20 @@ QVector3D Model::getShake() const
     return m_shake;
 }
 
-quint32 Model::displayId() const
-{
-    return m_displayId;
-}
-
-void Model::setDisplayId(quint32 displayId)
-{
-    m_displayId = displayId;
-
-    CreatureDisplayInfoDBC::entry displayInfo = CreatureDisplayInfoDBC::getEntry(m_displayId);
-    CreatureModelDataDBC::entry modelData = CreatureModelDataDBC::getEntry(displayInfo.model);
-
-    if (displayInfo.id != m_displayId) {
-        qDebug("Creature display ID %u does not exist", m_displayId);
-        return;
-    }
-
-    m_modelFileName = QString(modelData.model).replace("\\", "/").replace(".mdx", ".m2");
-
-    QString modelPath = m_modelFileName.section('/', 0, -2);
-
-    m_textureFileNames[11] = modelPath + "/" + QString(displayInfo.skin1) + ".blp";
-    m_textureFileNames[12] = modelPath + "/" + QString(displayInfo.skin2) + ".blp";
-    m_textureFileNames[13] = modelPath + "/" + QString(displayInfo.skin3) + ".blp";
-
-    m_modelChanged = true;
-}
-
 const QString & Model::fileName() const
 {
-    return m_modelFileName;
+    return m_fileName;
 }
 
 void Model::setFileName(const QString &fileName)
 {
-    m_modelFileName = fileName;
-    m_modelChanged = true;
+    m_fileName = fileName;
+
+    if (m_model)
+        delete m_model;
+
+    m_model = new M2(fileName);
+    m_model->setAnimation(0);
 }
 
 float Model::x() const
@@ -109,26 +84,6 @@ void Model::setOrientation(float orientation)
 
 void Model::update(int timeDelta)
 {
-    if (m_modelChanged) {
-        if (m_model)
-            delete m_model;
-
-        QTime time;
-        time.start();
-
-        m_model = new M2(m_modelFileName);
-
-        m_model->setAnimation(0);
-
-        QHash<quint32, QString>::const_iterator it = m_textureFileNames.constBegin();
-        while (it != m_textureFileNames.constEnd()) {
-            m_model->setTexture(it.key(), it.value());
-            it++;
-        }
-
-        m_modelChanged = false;
-    }
-
     if (m_model) {
         QMatrix4x4 matrix;
         matrix.translate(m_x, m_y, 0.0f);

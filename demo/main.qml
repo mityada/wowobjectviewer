@@ -161,7 +161,7 @@ ApplicationWindow {
                     text: "Add"
 
                     onClicked: {
-                        var model = Qt.createQmlObject('import WoWObjectViewer 1.0; Model {displayId: ' + displayId.text + ';}', scene);
+                        var model = Qt.createQmlObject('import WoWObjectViewer 1.0; Creature {displayId: ' + displayId.text + ';}', scene);
                         scene.addModel(model);
                     }
                 }
@@ -194,6 +194,31 @@ ApplicationWindow {
                     onClicked: {
                         visual.visual = visualId.text;
                         visual.start();
+                    }
+                }
+            }
+
+            Row {
+                id: characterRow
+
+                spacing: 5
+
+                TextField {
+                    id: race
+                    placeholderText: "Race"
+                }
+
+                TextField {
+                    id: gender
+                    placeholderText: "Gender"
+                }
+
+                Button {
+                    text: "Create"
+
+                    onClicked: {
+                        var character = Qt.createQmlObject('import WoWObjectViewer 1.0; Character {race: ' + race.text + '; gender: ' + gender.text + ';}', scene);
+                        scene.addModel(character);
                     }
                 }
             }

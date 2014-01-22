@@ -16,7 +16,6 @@ class CameraShake;
 class WOV_EXPORT Model : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(quint32 displayId READ displayId WRITE setDisplayId)
     Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
     Q_PROPERTY(float x READ x WRITE setX)
     Q_PROPERTY(float y READ y WRITE setY)
@@ -30,9 +29,6 @@ public:
 
     void addCameraShake(quint32 id);
     QVector3D getShake() const;
-
-    quint32 displayId() const;
-    void setDisplayId(quint32 displayId);
 
     const QString & fileName() const;
     void setFileName(const QString &fileName);
@@ -49,16 +45,15 @@ public:
     void render(QOpenGLShaderProgram *program, MVP mvp);
     void renderParticles(QOpenGLShaderProgram *program, MVP mvp);
 
+protected:
+    M2 *m_model;
+
 private:
     void updateVisualKits();
 
-    quint32 m_displayId;
-    float m_x, m_y, m_orientation;
+    QString m_fileName;
 
-    M2 *m_model;
-    bool m_modelChanged;
-    QString m_modelFileName;
-    QHash<quint32, QString> m_textureFileNames;
+    float m_x, m_y, m_orientation;
 
     QHash<quint32, SpellVisualKit *> m_visualKits;
 

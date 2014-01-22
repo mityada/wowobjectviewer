@@ -6,7 +6,7 @@ attribute vec4 boneweights;
 
 uniform mat4 mvpMatrix;
 uniform mat3 normalMatrix;
-uniform mat4 bones[100];
+uniform mat4 bones[150];
 uniform mat4 textureMatrix;
 
 varying vec2 v_texcoord;
