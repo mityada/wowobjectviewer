@@ -84,10 +84,10 @@ quint32 * Texture::readPalettedTexture(quint32 width, quint32 height, const char
 
 void Texture::create()
 {
+    initializeOpenGLFunctions();
+
     if (!m_texture)
         glGenTextures(1, &m_texture);
-
-    initializeOpenGLFunctions();
 
     glBindTexture(GL_TEXTURE_2D, m_texture);
 
@@ -157,6 +157,9 @@ void Texture::bind()
 {
     if (m_dirty)
         create();
+
+    if (!m_texture)
+        return;
 
     glBindTexture(GL_TEXTURE_2D, m_texture);
 }
