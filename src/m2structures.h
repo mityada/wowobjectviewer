@@ -244,6 +244,9 @@ struct M2TextureAnimation
 
 enum AttachmentSlot
 {
+    ATTACHMENT_RIGHT_SHOULDER = 5,
+    ATTACHMENT_LEFT_SHOULDER  = 6,
+    ATTACHMENT_HELM           = 11,
     ATTACHMENT_CHEST        = 15,
     ATTACHMENT_BREATH       = 17,
     ATTACHMENT_NAME         = 18,

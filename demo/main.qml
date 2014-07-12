@@ -203,14 +203,105 @@ ApplicationWindow {
 
                 spacing: 5
 
-                TextField {
-                    id: race
-                    placeholderText: "Race"
+                Column {
+                    spacing: 5
+
+                    TextField {
+                        id: race
+                        placeholderText: "Race"
+                    }
+
+                    TextField {
+                        id: gender
+                        placeholderText: "Gender"
+                    }
+                }
+    
+                Column {
+                    spacing: 5
+
+                    TextField {
+                        id: skinColor
+                        placeholderText: "Skin Color"
+                    }
+
+                    TextField {
+                        id: faceType
+                        placeholderText: "Face Type"
+                    }
+
+                    TextField {
+                        id: hairType
+                        placeholderText: "Hair Type"
+                    }
+
+                    TextField {
+                        id: hairStyle
+                        placeholderText: "Hair Color"
+                    }
+
+                    TextField {
+                        id: beardStyle
+                        placeholderText: "Facial Features"
+                    }
                 }
 
-                TextField {
-                    id: gender
-                    placeholderText: "Gender"
+                Column {
+                    spacing: 5
+
+                    TextField {
+                        id: helm
+                        placeholderText: "Helm"
+                    }
+
+                    TextField {
+                        id: shoulder
+                        placeholderText: "Shoulder"
+                    }
+
+                    TextField {
+                        id: shirt
+                        placeholderText: "Shirt"
+                    }
+
+                    TextField {
+                        id: chest 
+                        placeholderText: "Chest"
+                    }
+
+                    TextField {
+                        id: belt
+                        placeholderText: "Belt"
+                    }
+                }
+
+                Column {
+                    spacing: 5
+
+                    TextField {
+                        id: legs
+                        placeholderText: "Legs"
+                    }
+
+                    TextField {
+                        id: boots
+                        placeholderText: "Boots"
+                    }
+
+                    TextField {
+                        id: wrist
+                        placeholderText: "Wrist"
+                    }
+
+                    TextField {
+                        id: gloves
+                        placeholderText: "Gloves"
+                    }
+
+                    TextField {
+                        id: tabard
+                        placeholderText: "Tabard"
+                    }
                 }
 
                 Button {
@@ -218,6 +309,23 @@ ApplicationWindow {
 
                     onClicked: {
                         var character = Qt.createQmlObject('import WoWObjectViewer 1.0; Character {race: ' + race.text + '; gender: ' + gender.text + ';}', scene);
+                        character.skinColor = parseInt(skinColor.text);
+                        character.faceType = parseInt(faceType.text);
+                        character.hairType = parseInt(hairType.text);
+                        character.hairStyle = parseInt(hairStyle.text);
+                        character.beardStyle = parseInt(beardStyle.text);
+
+                        character.setEquipment(0, helm.text);
+                        character.setEquipment(1, shoulder.text);
+                        character.setEquipment(2, shirt.text);
+                        character.setEquipment(3, chest.text);
+                        character.setEquipment(4, belt.text);
+                        character.setEquipment(5, legs.text);
+                        character.setEquipment(6, boots.text);
+                        character.setEquipment(7, wrist.text);
+                        character.setEquipment(8, gloves.text);
+                        character.setEquipment(9, tabard.text);
+
                         scene.addModel(character);
                     }
                 }

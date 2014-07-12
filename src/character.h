@@ -34,6 +34,9 @@ public:
     void setHairStyle(quint32 hairStyle);
     void setBeardStyle(quint32 beardStyle);
 
+    Q_INVOKABLE quint32 equipment(int slot) const;
+    Q_INVOKABLE void setEquipment(int slot, quint32 item);
+
 private:
     void updateModel();
     void updateAppearance();
@@ -46,6 +49,7 @@ private:
     quint8 m_hairStyle;
     quint8 m_beardStyle;
 
+    quint32 m_equipment[10];
 };
 
 #endif

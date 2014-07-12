@@ -3,6 +3,20 @@
 
 #include "model.h"
 
+enum ItemSlot
+{
+    ITEM_HELM     = 0,
+    ITEM_SHOULDER = 1,
+    ITEM_SHIRT    = 2,
+    ITEM_CHEST    = 3,
+    ITEM_BELT     = 4,
+    ITEM_LEGS     = 5,
+    ITEM_BOOTS    = 6,
+    ITEM_WRIST    = 7,
+    ITEM_GLOVES   = 8,
+    ITEM_TABARD   = 9
+};
+
 struct Appearance
 {
     quint8 race;
@@ -12,6 +26,8 @@ struct Appearance
     quint8 hairType;
     quint8 hairStyle;
     quint8 beardStyle;
+
+    quint32 equipment[10];
 };
 
 class WOV_EXPORT Creature : public Model
@@ -26,7 +42,7 @@ public:
     void setDisplayId(quint32 displayId);
 
 protected:
-    void setAppearance(const Appearance& appearance);
+    void setAppearance(const Appearance& appearance, bool body = false);
 
 private:
     quint32 m_displayId;

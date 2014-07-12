@@ -136,6 +136,7 @@ namespace ChrRacesDBC
         quint32 explorationSound;
         quint32 maleDisplayId;
         quint32 femaleDisplayId;
+        const char *prefix;
     };
 
     entry getEntry(quint32 id);
@@ -189,6 +190,33 @@ namespace CreatureModelDataDBC
         quint32 id;
         quint32 flags;
         const char *model;
+    };
+
+    entry getEntry(quint32 id);
+}
+
+namespace ItemDisplayInfoDBC
+{
+    struct entry
+    {
+        quint32 id;
+        const char *leftModel;
+        const char *rightModel;
+        const char *leftTexture;
+        const char *rightTexture;
+        const char *icon1;
+        quint32 geoset[4];
+        quint32 spellVisual;
+        quint32 groupSound;
+        quint32 helmetGeosetVis[2];
+        const char *upperArmTexture;
+        const char *lowerArmTexture;
+        const char *handsTexture;
+        const char *upperTorsoTexture;
+        const char *lowerTorsoTexture;
+        const char *upperLegTexture;
+        const char *lowerLegTexture;
+        const char *footTexture;
     };
 
     entry getEntry(quint32 id);

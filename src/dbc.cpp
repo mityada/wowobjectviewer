@@ -116,7 +116,10 @@ ChrRacesDBC::entry ChrRacesDBC::getEntry(quint32 id)
 {
     static DBC dbc("DBFilesClient/ChrRaces.dbc");
 
-    return dbc.getEntry<entry>(id);
+    entry e = dbc.getEntry<entry>(id);
+    e.prefix = dbc.getStringBlock() + quint32(e.prefix);
+
+    return e;
 }
 
 CreatureDisplayInfoDBC::entry CreatureDisplayInfoDBC::getEntry(quint32 id)
@@ -162,6 +165,27 @@ CreatureModelDataDBC::entry CreatureModelDataDBC::getEntry(quint32 id)
 
     entry e = dbc.getEntry<entry>(id);
     e.model = dbc.getStringBlock() + quint32(e.model);
+
+    return e;
+}
+
+ItemDisplayInfoDBC::entry ItemDisplayInfoDBC::getEntry(quint32 id)
+{
+    static DBC dbc("DBFilesClient/ItemDisplayInfo.dbc");
+
+    entry e = dbc.getEntry<entry>(id);
+    e.leftModel = dbc.getStringBlock() + quint32(e.leftModel);
+    e.rightModel = dbc.getStringBlock() + quint32(e.rightModel);
+    e.leftTexture = dbc.getStringBlock() + quint32(e.leftTexture);
+    e.rightTexture = dbc.getStringBlock() + quint32(e.rightTexture);
+    e.upperArmTexture = dbc.getStringBlock() + quint32(e.upperArmTexture);
+    e.lowerArmTexture = dbc.getStringBlock() + quint32(e.lowerArmTexture);
+    e.handsTexture = dbc.getStringBlock() + quint32(e.handsTexture);
+    e.upperTorsoTexture = dbc.getStringBlock() + quint32(e.upperTorsoTexture);
+    e.lowerTorsoTexture = dbc.getStringBlock() + quint32(e.lowerTorsoTexture);
+    e.upperLegTexture = dbc.getStringBlock() + quint32(e.upperLegTexture);
+    e.lowerLegTexture = dbc.getStringBlock() + quint32(e.lowerLegTexture);
+    e.footTexture = dbc.getStringBlock() + quint32(e.footTexture);
 
     return e;
 }

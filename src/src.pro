@@ -9,6 +9,7 @@ HEADERS = \
     bone.h \
     camerashake.h \
     character.h \
+    combinedtexture.h \
     creature.h \
     dbc.h \
     global.h \
@@ -29,6 +30,7 @@ SOURCES = \
     bone.cpp \
     camerashake.cpp \
     character.cpp \
+    combinedtexture.cpp \
     creature.cpp \
     dbc.cpp \
     m2.cpp \

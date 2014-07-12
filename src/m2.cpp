@@ -4,6 +4,7 @@
 #include "m2.h"
 #include "dbc.h"
 #include "mpq.h"
+#include "combinedtexture.h"
 
 M2::M2(const QString &fileName)
     : m_loaded(false),
@@ -54,13 +55,15 @@ M2::M2(const QString &fileName)
     M2Texture *textures = reinterpret_cast<M2Texture *>(m_data.data() + m_header->texturesOffset);
 
     for (quint32 i = 0; i < m_header->texturesCount; i++) {
-        QString fileName(m_data.data() + textures[i].fileNameOffset);
+        QString textureFileName(m_data.data() + textures[i].fileNameOffset);
 
         m_textures << Texture();
 
         if (textures[i].type == 0)
-            m_textures[i].load(fileName);
+            m_textures[i].load(textureFileName);
     }
+
+    m_bodyTexture = 0;
 
     m_textureAnimationLookup = reinterpret_cast<qint16 *>(m_data.data() + m_header->textureAnimationLookupOffset);
 
@@ -268,7 +271,14 @@ void M2::render(QOpenGLShaderProgram *program, MVP mvp)
         else
             glDepthMask(GL_TRUE);
 
-        m_textures[m_textureLookup[m_textureUnits[i].textureIndex]].bind();
+        quint16 textureIndex = m_textureLookup[m_textureUnits[i].textureIndex];
+
+        if (textureIndex == m_replaceableTextures[TEXTURE_BODY] && m_bodyTexture) {
+            program->release();
+            m_bodyTexture->bind();
+            program->bind();
+        } else
+            m_textures[textureIndex].bind();
 
         QMatrix4x4 textureMatrix;
 
@@ -510,12 +520,17 @@ void M2::setTexture(quint32 type, QString fileName)
     m_textures[m_replaceableTextures[type]].load(fileName);
 }
 
+void M2::setBodyTexture(CombinedTexture *texture)
+{
+    m_bodyTexture = texture;
+}
+
 void M2::setGeoset(quint8 type, quint8 value)
 {
     if (type >= GEOSET_COUNT)
         return;
 
-    if (value == 0 && value >= 100)
+    if (value == 0 || value >= 100)
         return;
 
     m_geosets[type] = value;

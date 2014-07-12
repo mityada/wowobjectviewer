@@ -15,6 +15,8 @@
 #include "particleemitter.h"
 #include "mvp.h"
 
+class CombinedTexture;
+
 enum GeosetType
 {
     GEOSET_HAIR    = 0,
@@ -26,7 +28,7 @@ enum GeosetType
     GEOSET_UNK1    = 6,
     GEOSET_EARS    = 7,
     GEOSET_SLEEVES = 8,
-    GEOSET_FEET2   = 9,
+    GEOSET_PANTS   = 9,
     GEOSET_SHIRT   = 10,
     GEOSET_UNK2    = 11,
     GEOSET_TABARD  = 12,
@@ -58,6 +60,7 @@ public:
     bool animating() const;
 
     void setTexture(quint32 type, QString fileName);
+    void setBodyTexture(CombinedTexture *texture);
 
     void setGeoset(quint8 type, quint8 value);
 
@@ -98,6 +101,7 @@ private:
     QList<Bone> m_bones;
 
     QList<Texture> m_textures;
+    CombinedTexture *m_bodyTexture;
     quint16 *m_textureLookup;
     qint16 *m_replaceableTextures;
 

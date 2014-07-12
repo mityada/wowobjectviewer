@@ -2,6 +2,8 @@
 
 Character::Character() : m_race(0), m_gender(0), m_skinColor(0), m_faceType(0), m_hairType(0), m_hairStyle(0), m_beardStyle(0)
 {
+    for (int i = 0; i < 10; i++)
+        m_equipment[i] = 0;
 }
 
 quint32 Character::race() const
@@ -81,8 +83,22 @@ void Character::setBeardStyle(quint32 beardStyle)
     updateAppearance();
 }
 
+quint32 Character::equipment(int slot) const
+{
+    return m_equipment[slot];
+}
+
+void Character::setEquipment(int slot, quint32 item)
+{
+    m_equipment[slot] = item;
+    updateAppearance();
+}
+
 void Character::updateModel()
 {
+    if (!m_race)
+        return;
+
     ChrRacesDBC::entry race = ChrRacesDBC::getEntry(m_race);
 
     if (race.id != m_race)
@@ -107,5 +123,8 @@ void Character::updateAppearance()
     appearance.hairStyle = m_hairStyle;
     appearance.beardStyle = m_beardStyle;
 
-    setAppearance(appearance);
+    for (int i = 0; i < 10; i++)
+        appearance.equipment[i] = m_equipment[i];
+
+    setAppearance(appearance, true);
 }
